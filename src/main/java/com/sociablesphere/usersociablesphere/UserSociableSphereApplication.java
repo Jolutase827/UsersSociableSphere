@@ -1,4 +1,4 @@
-package com.sociablesphere.UserSociableSphere;
+package com.sociablesphere.usersociablesphere;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
