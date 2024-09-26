@@ -1,4 +1,4 @@
 package com.sociablesphere.usersociablesphere.repository;
 
-public class UserRepository {
+public interface UserRepository {
 }
