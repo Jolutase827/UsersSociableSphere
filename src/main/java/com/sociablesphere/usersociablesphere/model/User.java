@@ -1,6 +1,5 @@
 package com.sociablesphere.usersociablesphere.model;
 
-import com.sociablesphere.usersociablesphere.api.dto.UserDAO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -60,19 +59,4 @@ public class User {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
-
-    public static UserDAO fromEntity(User user){
-        return UserDAO.builder()
-                .id(user.id)
-                .userName(user.userName)
-                .name(user.name)
-                .lastName(user.lastName)
-                .email(user.email)
-                .photo(user.photo)
-                .description(user.description)
-                .role(user.role)
-                .wallet(user.wallet)
-                .apiToken(user.apiToken)
-                .build();
-    }
 }
