@@ -1,11 +1,13 @@
 package com.sociablesphere.usersociablesphere.api.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@Builder
 @AllArgsConstructor
 public class UserCreationDTO {
     private String userName;
