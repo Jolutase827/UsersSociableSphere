@@ -1,10 +1,14 @@
 package com.sociablesphere.usersociablesphere.api.dto;
 
 import jakarta.persistence.Column;
+import lombok.Builder;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Data
+@Builder
 public class UserDAO {
     private UUID id;
     private String userName;
