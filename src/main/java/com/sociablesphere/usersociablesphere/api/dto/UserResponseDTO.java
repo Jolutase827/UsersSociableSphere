@@ -1,15 +1,15 @@
 package com.sociablesphere.usersociablesphere.api.dto;
 
-import jakarta.persistence.Column;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
-@Builder
-public class UserDAO {
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserResponseDTO {
     private UUID id;
     private String userName;
     private String name;
@@ -17,12 +17,5 @@ public class UserDAO {
     private String email;
     private String photo;
     private String description;
-    private String password;
     private String role;
-    private Double wallet;
-    private String apiToken;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
-
 }
