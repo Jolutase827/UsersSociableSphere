@@ -1,4 +1,27 @@
 package com.sociablesphere.usersociablesphere.api.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.UUID;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+<<<<<<<< HEAD:src/main/java/com/sociablesphere/usersociablesphere/api/dto/UserDTO.java
+public class UserDTO {
+========
 public class UserResponseDTO {
+>>>>>>>> master:src/main/java/com/sociablesphere/usersociablesphere/api/dto/UserResponseDTO.java
+    private UUID id;
+    private String userName;
+    private String name;
+    private String lastName;
+    private String email;
+    private String photo;
+    private String description;
+    private String role;
 }
