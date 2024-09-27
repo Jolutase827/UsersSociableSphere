@@ -42,7 +42,10 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public void deleteAcount(UUID id) {
-        userRepository.deleteById(id);
+        userRepository.findById(id)
+                .switchIfEmpty(Mono.error(new UserNotFoundException("The user with the id " + id + " doesn't exist.")))
+                .flatMap(user -> userRepository.deleteById(id))
+                .subscribe();
     }
 
     @Override
@@ -69,6 +72,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Flux<UserDetailDTO> findAll() {
-        return userRepository.findAll().map(UserMapper::toUserDetailDTO);
+        return userRepository.findAll()
+                .map(UserMapper::toUserDetailDTO);
     }
 }
