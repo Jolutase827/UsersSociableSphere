@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: UserSociableSphere
+
+  r2dbc:
+    url: r2dbc:mysql://localhost:3306/UsersSocialSphere?serverTimezone=UTC
+    username: users
+    password: users
+
+  jpa:
+    hibernate:
+      ddl-auto: none  # Hibernate no se utiliza con R2DBC, desactívalo o usa otra estrategia
+    show-sql: true
+
+  liquibase:
+    enabled: false   # Si estás usando Liquibase, puedes desactivarlo para R2DBC (opcional)
