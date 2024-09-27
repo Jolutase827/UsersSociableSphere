@@ -17,8 +17,5 @@ public class UserServiceImpl {
         this.userRepository = userRepository;
     }
 
-    public Mono<UserCreationDTO> createUser(UserCreationDTO user) {
-        User user.setId(UUID.randomUUID());
-        return userRepository.save(user).map(newUser-> BeanUtils.);
-    }
+
 }

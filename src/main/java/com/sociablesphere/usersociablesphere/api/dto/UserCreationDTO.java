@@ -18,5 +18,4 @@ public class UserCreationDTO {
     private String description;
     private String password;
     private String role;
-    private Double wallet;
 }
