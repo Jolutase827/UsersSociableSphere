@@ -2,6 +2,7 @@ package com.sociablesphere.usersociablesphere.service.user;
 
 import com.sociablesphere.usersociablesphere.api.dto.*;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
@@ -13,7 +14,8 @@ public interface UserService {
     Mono<UserDetailDTO> updateUser(UUID id, UserCreationDTO dataToModify);
     void deleteAcount(UUID id);
     Mono<UserDetailDTO> login(UserLoginDTO userToLogin);
-    Mono<UserDetailDTO> updatePassword (UserPasswordDTO passwordToUpdate);
+    Mono<UserDetailDTO> updatePassword (UUID id, UserPasswordDTO passwordToUpdate);
+    Flux<UserDetailDTO> findAll();
 
 
 

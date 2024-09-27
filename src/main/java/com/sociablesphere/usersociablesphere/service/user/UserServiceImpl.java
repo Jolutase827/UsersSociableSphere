@@ -4,6 +4,7 @@ import com.sociablesphere.usersociablesphere.api.dto.*;
 import com.sociablesphere.usersociablesphere.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
@@ -20,9 +21,10 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public Mono<UserDetailDTO> updateUser(UserResponseDTO dataToUpdate) {
+    public Mono<UserDetailDTO> updateUser(UUID id, UserCreationDTO dataToModify) {
         return null;
     }
+
 
     @Override
     public void deleteAcount(UUID id) {}
@@ -33,7 +35,12 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public Mono<UserDetailDTO> updatePassword(UserPasswordDTO passwordToUpdate) {
+    public Mono<UserDetailDTO> updatePassword(UUID id, UserPasswordDTO passwordToUpdate) {
+        return null;
+    }
+
+    @Override
+    public Flux<UserDetailDTO> findAll() {
         return null;
     }
 }
