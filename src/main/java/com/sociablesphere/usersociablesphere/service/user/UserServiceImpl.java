@@ -1,7 +1,9 @@
 package com.sociablesphere.usersociablesphere.service.user;
 
+import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
 import com.sociablesphere.usersociablesphere.model.User;
 import com.sociablesphere.usersociablesphere.repository.UserRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -15,8 +17,8 @@ public class UserServiceImpl {
         this.userRepository = userRepository;
     }
 
-    public Mono<User> createUser(User user) {
-        user.setId(UUID.randomUUID());
-        return userRepository.save(user);
+    public Mono<UserCreationDTO> createUser(UserCreationDTO user) {
+        User user.setId(UUID.randomUUID());
+        return userRepository.save(user).map(newUser-> BeanUtils.);
     }
 }
