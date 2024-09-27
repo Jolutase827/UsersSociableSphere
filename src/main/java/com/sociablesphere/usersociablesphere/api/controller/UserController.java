@@ -1,15 +1,11 @@
 package com.sociablesphere.usersociablesphere.api.controller;
 
 import com.sociablesphere.usersociablesphere.api.dto.*;
-import com.sociablesphere.usersociablesphere.model.User;
 import com.sociablesphere.usersociablesphere.service.user.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-
 import java.util.UUID;
-
-import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/v1/users")
