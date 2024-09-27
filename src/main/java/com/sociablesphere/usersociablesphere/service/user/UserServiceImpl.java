@@ -1,9 +1,6 @@
 package com.sociablesphere.usersociablesphere.service.user;
 
-import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
-import com.sociablesphere.usersociablesphere.api.dto.UserDetailDTO;
-import com.sociablesphere.usersociablesphere.api.dto.UserLoginDTO;
-import com.sociablesphere.usersociablesphere.api.dto.UserResponseDTO;
+import com.sociablesphere.usersociablesphere.api.dto.*;
 import com.sociablesphere.usersociablesphere.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,12 +25,15 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public void deleteAcount(UUID id) {
-
-    }
+    public void deleteAcount(UUID id) {}
 
     @Override
     public Mono<UserDetailDTO> login(UserLoginDTO userToLogin) {
+        return null;
+    }
+
+    @Override
+    public Mono<UserDetailDTO> updatePassword(UserPasswordDTO passwordToUpdate) {
         return null;
     }
 }
