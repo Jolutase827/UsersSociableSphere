@@ -12,7 +12,7 @@ import java.util.UUID;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/v1/users")
 public class UserController {
 
     UserService userService;
@@ -22,31 +22,31 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Mono<UserDetailDTO>> registerUser (UserCreationDTO userCreationDTO){
+    public ResponseEntity<Mono<UserDetailDTO>> registerUser (@RequestBody UserCreationDTO userCreationDTO){
         Mono<UserDetailDTO> user = userService.register(userCreationDTO);
         return ResponseEntity.ok(user);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Mono<UserDetailDTO>> loginUser (UserLoginDTO userLoginDTO){
+    public ResponseEntity<Mono<UserDetailDTO>> loginUser (@RequestBody UserLoginDTO userLoginDTO){
         Mono<UserDetailDTO> user = userService.login(userLoginDTO);
         return ResponseEntity.ok(user);
     }
 
     @PatchMapping("/{id}/password")
-    public ResponseEntity<Mono<UserDetailDTO>> patchPassword (UserPasswordDTO userPassword){
-        Mono<UserDetailDTO> user = userService.updatePassword(userPassword);
+    public ResponseEntity<Mono<UserDetailDTO>> patchPassword (@PathVariable UUID id, @RequestBody UserPasswordDTO userPassword){
+        Mono<UserDetailDTO> user = userService.updatePassword(id, userPassword);
         return ResponseEntity.ok(user);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Mono<UserDetailDTO>> updateUser (UserResponseDTO dataToUpdate){
-        Mono<UserDetailDTO> user = userService.updateUser(dataToUpdate);
+    public ResponseEntity<Mono<UserDetailDTO>> updateUser (@PathVariable UUID id, @RequestBody UserCreationDTO dataToUpdate){
+        Mono<UserDetailDTO> user = userService.updateUser(id,dataToUpdate);
         return ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/{apiToken}")
-    public ResponseEntity<String> updateUser (UUID id){
+    public ResponseEntity<String> updateUser (@PathVariable UUID id){
         userService.deleteAcount(id);
         return ResponseEntity.status(OK).body("Order with id " + id + " has been deleted successfully");
     }
