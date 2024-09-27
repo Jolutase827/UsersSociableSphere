@@ -11,11 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-<<<<<<<< HEAD:src/main/java/com/sociablesphere/usersociablesphere/api/dto/UserDTO.java
-public class UserDTO {
-========
 public class UserResponseDTO {
->>>>>>>> master:src/main/java/com/sociablesphere/usersociablesphere/api/dto/UserResponseDTO.java
     private UUID id;
     private String userName;
     private String name;
