@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 import java.util.UUID;
 
 @Service
-public class UserServiceImpl {
+public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
 
     public UserServiceImpl(UserRepository userRepository) {
@@ -18,4 +18,18 @@ public class UserServiceImpl {
     }
 
 
+    @Override
+    public Mono<UserCreationDTO> register(UserCreationDTO newUser) {
+        return null;
+    }
+
+    @Override
+    public Mono<UserCreationDTO> updateUser(UserCreationDTO newUser) {
+        return null;
+    }
+
+    @Override
+    public void deleteAcount(UserCreationDTO newUser) {
+
+    }
 }
