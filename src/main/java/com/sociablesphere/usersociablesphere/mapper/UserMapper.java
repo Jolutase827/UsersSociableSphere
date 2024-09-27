@@ -4,6 +4,7 @@ import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserDetailDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserResponseDTO;
 import com.sociablesphere.usersociablesphere.model.User;
+import com.sociablesphere.usersociablesphere.privacy.PasswordUtil;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -21,7 +22,7 @@ public class UserMapper {
                 .email(userCreationDTO.getEmail())
                 .photo(userCreationDTO.getPhoto())
                 .description(userCreationDTO.getDescription())
-                .password(userCreationDTO.getPassword())
+                .password(PasswordUtil.hashPassword(userCreationDTO.getPassword()))
                 .role(userCreationDTO.getRole())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
