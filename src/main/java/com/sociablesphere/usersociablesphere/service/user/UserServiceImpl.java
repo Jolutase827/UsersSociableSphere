@@ -1,6 +1,11 @@
 package com.sociablesphere.usersociablesphere.service.user;
 
 import com.sociablesphere.usersociablesphere.api.dto.*;
+import com.sociablesphere.usersociablesphere.exceptions.InvalidCredentialsException;
+import com.sociablesphere.usersociablesphere.exceptions.UserNotFoundException;
+import com.sociablesphere.usersociablesphere.mapper.UserMapper;
+import com.sociablesphere.usersociablesphere.model.User;
+import com.sociablesphere.usersociablesphere.privacy.PasswordUtil;
 import com.sociablesphere.usersociablesphere.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,30 +22,53 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Mono<UserDetailDTO> register(UserCreationDTO newUser) {
-        return null;
+        User user = UserMapper.toUser(newUser);
+        return userRepository.save(user).map(UserMapper::toUserDetailDTO);
     }
 
     @Override
     public Mono<UserDetailDTO> updateUser(UUID id, UserCreationDTO dataToModify) {
-        return null;
+        Mono<User> userMono = userRepository.findById(id)
+                                    .switchIfEmpty(Mono.error(new UserNotFoundException("The user with the id "+id+
+                                                                                        " doesn't exists.")));;
+        return userMono
+                .filter(user -> PasswordUtil.checkPassword(dataToModify.getPassword(),user.getPassword()))
+                .flatMap(user -> {
+                    user.updateData(dataToModify);
+                    return userRepository.save(user).map(UserMapper::toUserDetailDTO);
+                });
     }
 
 
     @Override
-    public void deleteAcount(UUID id) {}
+    public void deleteAcount(UUID id) {
+        userRepository.deleteById(id);
+    }
 
     @Override
     public Mono<UserDetailDTO> login(UserLoginDTO userToLogin) {
-        return null;
+        return userRepository.findByEmail(userToLogin.getEmail())
+                .switchIfEmpty(userRepository.findByUserName(userToLogin.getName()))
+                .switchIfEmpty(Mono.error(new InvalidCredentialsException("Invalid credentials.")))
+                .filter(user -> PasswordUtil.checkPassword(userToLogin.getPassword(),user.getPassword()))
+                .map(UserMapper::toUserDetailDTO);
     }
 
     @Override
     public Mono<UserDetailDTO> updatePassword(UUID id, UserPasswordDTO passwordToUpdate) {
-        return null;
+        Mono<User> userMono = userRepository.findById(id)
+                                        .switchIfEmpty(Mono.error(new UserNotFoundException("The user with the id "+id+
+                                                                                            " doesn't exists.")));
+        return userMono
+                .filter(user -> PasswordUtil.checkPassword(passwordToUpdate.getOldPassword(),user.getPassword()))
+                .flatMap(user -> {
+                    user.setPassword(PasswordUtil.hashPassword(passwordToUpdate.getNewPassword()));
+                    return userRepository.save(user).map(UserMapper::toUserDetailDTO);
+                });
     }
 
     @Override
     public Flux<UserDetailDTO> findAll() {
-        return null;
+        return userRepository.findAll().map(UserMapper::toUserDetailDTO);
     }
 }
