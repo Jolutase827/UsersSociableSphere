@@ -1,0 +1,287 @@
+openapi: 3.0.3
+info:
+  title: Swagger Petstore - OpenAPI 3.0
+  description: |-
+    This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
+    Swagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
+    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
+    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
+
+    _If you're looking for the Swagger 2.0/OAS 2.0 version of Petstore, then click [here](https://editor.swagger.io/?url=https://petstore.swagger.io/v2/swagger.yaml). Alternatively, you can load via the `Edit > Load Petstore OAS 2.0` menu option!_
+    
+    Some useful links:
+    - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
+    - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: https://petstore3.swagger.io/api/v3
+tags:
+  - name: user
+    description: Operations about user
+paths:
+  /v1/users/register:
+    post:
+      tags:
+        - user
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: createUser
+      requestBody:
+        description: Created user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreationDTO'
+         
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetailDTO'
+                
+  /v1/users/login:
+    post:
+      tags:
+        - user
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: loginUser
+      requestBody:
+        description: Created user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLoginDTO'
+         
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetailDTO'
+                
+  /v1/users/{id}/password:
+    patch:
+      tags:
+        - user
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: loginUser
+      parameters:
+        - name: id
+          in: path
+          description: ID of user to change the password
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Created user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPasswordDTO'
+         
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetailDTO'
+                
+  /v1/users/{id}:
+    put:
+      tags:
+        - user
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: putId
+      parameters:
+        - name: id
+          in: path
+          description: ID of user to change the password
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Created user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreationDTO'
+         
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetailDTO'
+  /v1/users/{apiToken}:
+    delete:
+      tags:
+        - user
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      parameters:
+        - name: apiToken
+          in: path
+          description: ID of user to change the password
+          required: true
+          schema:
+            type: string
+            format: uuid
+         
+      responses:
+        default:
+          description: successful operation
+          
+                
+components:
+  schemas:
+    UserCreationDTO:
+      type: object
+      properties:
+        userName:
+          type: string
+          example: johndoe
+        name:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        email:
+          type: string
+          format: email
+          example: johndoe@example.com
+        photo:
+          type: string
+          example: "https://example.com/photo.jpg"
+        description:
+          type: string
+          example: "A brief user description"
+        password:
+          type: string
+          format: password
+          example: "password123"
+        role:
+          type: string
+          example: "admin"
+
+    UserDetailDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        userName:
+          type: string
+          example: johndoe
+        name:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        email:
+          type: string
+          format: email
+          example: johndoe@example.com
+        photo:
+          type: string
+          example: "https://example.com/photo.jpg"
+        description:
+          type: string
+          example: "A brief user description"
+        role:
+          type: string
+          example: "admin"
+        wallet:
+          type: number
+          format: double
+          example: 100.50
+        apiToken:
+          type: string
+          example: "abc123xyz"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2023-09-15T10:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2023-09-20T14:30:00Z"
+
+    UserLoginDTO:
+      type: object
+      properties:
+        name:
+          type: string
+          example: johndoe
+        password:
+          type: string
+          format: password
+          example: "password123"
+        email:
+          type: string
+          format: email
+          example: johndoe@example.com
+
+    UserPasswordDTO:
+      type: object
+      properties:
+        oldPassword:
+          type: string
+          format: password
+          example: "oldPassword123"
+        newPassword:
+          type: string
+          format: password
+          example: "newPassword456"
+
+    UserResponseDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        userName:
+          type: string
+          example: johndoe
+        name:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        email:
+          type: string
+          format: email
+          example: johndoe@example.com
+        photo:
+          type: string
+          example: "https://example.com/photo.jpg"
+        description:
+          type: string
+          example: "A brief user description"
+        role:
+          type: string
+          example: "admin"
