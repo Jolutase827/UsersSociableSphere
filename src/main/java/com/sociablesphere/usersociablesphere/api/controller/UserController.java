@@ -12,7 +12,7 @@ import java.util.UUID;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("v1/users")
 public class UserController {
 
     UserService userService;
@@ -45,10 +45,5 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @DeleteMapping("/{apiToken}")
-    public ResponseEntity<String> updateUser (UUID id){
-        userService.deleteAcount(id);
-        return ResponseEntity.status(OK).body("Order with id " + id + " has been deleted successfully");
-    }
 
 }
