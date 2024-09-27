@@ -4,6 +4,7 @@ import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserDetailDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserLoginDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserResponseDTO;
+import com.sociablesphere.usersociablesphere.model.User;
 import com.sociablesphere.usersociablesphere.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,11 +20,14 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Mono<UserDetailDTO> register(UserCreationDTO newUser) {
+
         return null;
     }
 
     @Override
-    public Mono<UserDetailDTO> updateUser(UserResponseDTO dataToUpdate) {
+    public Mono<UserDetailDTO> updateUser(UUID id, UserCreationDTO dataToModify) {
+        Mono<User> user = userRepository.findById(id);
+
         return null;
     }
 

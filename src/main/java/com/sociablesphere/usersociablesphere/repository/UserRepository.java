@@ -8,9 +8,8 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface UserRepository extends R2dbcRepository<User,UUID> {
 
-    public Mono<User> findByUserName(String string);
-    public Mono<User> findByEmail(String string);
-
+    public Mono<User> findByUserName(String userName);
+    public Mono<User> findByEmail(String email);
 }
 
 
