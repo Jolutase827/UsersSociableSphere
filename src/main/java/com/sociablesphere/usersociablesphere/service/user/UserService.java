@@ -1,15 +1,25 @@
 package com.sociablesphere.usersociablesphere.service.user;
 
-import com.sociablesphere.usersociablesphere.model.User;
-import reactor.core.publisher.Flux;
+import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
+import com.sociablesphere.usersociablesphere.api.dto.UserDetailDTO;
+import com.sociablesphere.usersociablesphere.api.dto.UserLoginDTO;
+import com.sociablesphere.usersociablesphere.api.dto.UserResponseDTO;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
+@Service
 public interface UserService {
-    Mono<User> createUser(User user);
-    Mono<User> getUserById(UUID id);
-    Flux<User> getAllUsers();
-    Mono<User> updateUser(UUID id, User userDetails);
-    Mono<Void> deleteUser(UUID id);
+
+    Mono<UserDetailDTO> register(UserCreationDTO newUser);
+    Mono<UserDetailDTO> updateUser(UserResponseDTO dataToUpdate);
+    void deleteAcount(UUID id);
+    Mono<UserDetailDTO> login(UserLoginDTO userToLogin);
+
+
+
+
+
+
 }
