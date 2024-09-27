@@ -2,6 +2,11 @@ spring:
   application:
     name: UserSociableSphere
 
+  security:
+    user:
+      name: user
+      password: user
+
   r2dbc:
     url: r2dbc:mysql://localhost:3306/UsersSocialSphere
     username: users
