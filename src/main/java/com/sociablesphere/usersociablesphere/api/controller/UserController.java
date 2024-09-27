@@ -4,6 +4,7 @@ import com.sociablesphere.usersociablesphere.api.dto.*;
 import com.sociablesphere.usersociablesphere.service.user.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import java.util.UUID;
 
@@ -16,6 +17,12 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping
+    public ResponseEntity<Flux<UserDetailDTO>> getAllUsers() {
+        Flux<UserDetailDTO> users = userService.findAll(); // Asegúrate de que el método esté en UserService
+        return ResponseEntity.ok(users);
     }
 
     @PostMapping("/create")
