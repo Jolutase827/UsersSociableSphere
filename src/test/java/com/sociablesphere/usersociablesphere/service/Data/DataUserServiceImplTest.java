@@ -17,7 +17,7 @@ public class DataUserServiceImplTest {
             .email("paco@example.com")
             .photo("/profile_picture/joseLuis.png")
             .description("Me gustan las peras!!!")
-            .password(PasswordUtil.hashPassword("12345"))
+            .password("12345")
             .role("normal")
             .build();
 
@@ -39,8 +39,12 @@ public class DataUserServiceImplTest {
             .build();
 
     public final static UserPasswordDTO USER_PASSWORD_DTO = UserPasswordDTO.builder()
-            .oldPassword("12345")  // Contraseña actual
-            .newPassword("newPassword123")  // Nueva contraseña
+            .oldPassword("12345")
+            .newPassword("newPassword123")
+            .build();
+    public final static UserPasswordDTO USER_WRONG_PASSWORD_DTO = UserPasswordDTO.builder()
+            .oldPassword("12345675")
+            .newPassword("newPassword123")
             .build();
 
     public static final UserCreationDTO INVALID_PASSWORD_DTO = UserCreationDTO.builder()
@@ -50,7 +54,7 @@ public class DataUserServiceImplTest {
             .email("paco@example.com")
             .photo("/profile_picture/joseLuis.png")
             .description("Me gustan las peras!!!")
-            .password("wrongPassword") // Contraseña incorrecta
+            .password("wrongPassword")
             .role("normal")
             .build();
 }

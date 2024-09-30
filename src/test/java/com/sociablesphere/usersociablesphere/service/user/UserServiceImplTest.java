@@ -144,6 +144,25 @@ class UserServiceImplTest {
         }
 
         @Test
+        @DisplayName("Given valid user ID and incorrect old password, Then throw InvalidCredentialsException")
+        void updatePasswordInValid() {
+            // Given
+            User userEntity = UserMapper.toUser(USER_RETURN);
+            when(userRepository.findById((UUID) any())).thenReturn(Mono.just(userEntity));
+
+            // When
+            Mono<UserDetailDTO> userDetailDTOMono = userService.updatePassword(USER_ID, USER_WRONG_PASSWORD_DTO);
+
+            // Then
+            StepVerifier.create(userDetailDTOMono)
+                    .expectErrorMatches(error -> error instanceof InvalidCredentialsException &&
+                            error.getMessage().equals("Invalid credentials"))
+                    .verify();
+
+            verify(userRepository).findById((UUID) any());
+        }
+
+        @Test
         @DisplayName("Given a non-existing user ID, Then throw UserNotFoundException")
         void updatePasswordUserNotFound() {
             // Given
@@ -200,6 +219,8 @@ class UserServiceImplTest {
             // Given
             User userEntity = UserMapper.toUser(USER_RETURN);
             when(userRepository.findByEmail(any())).thenReturn(Mono.just(userEntity));
+            when(userRepository.findByUserName(any())).thenReturn(Mono.just(userEntity));
+
 
             // When
             Mono<UserDetailDTO> userDetailDTOMono = userService.login(USER_LOGIN);
@@ -215,6 +236,8 @@ class UserServiceImplTest {
                     .verifyComplete();
 
             verify(userRepository).findByEmail(any());
+            verify(userRepository).findByUserName(any());
+
         }
 
         @Test
@@ -222,6 +245,8 @@ class UserServiceImplTest {
         void loginUserInvalid() {
             // Given
             when(userRepository.findByEmail(any())).thenReturn(Mono.empty());
+            when(userRepository.findByUserName(any())).thenReturn(Mono.empty());
+
 
             // When
             Mono<UserDetailDTO> userDetailDTOMono = userService.login(USER_LOGIN);
@@ -233,6 +258,7 @@ class UserServiceImplTest {
                     .verify();
 
             verify(userRepository).findByEmail(any());
+            verify(userRepository).findByUserName(any());
         }
     }
 
@@ -298,7 +324,9 @@ class UserServiceImplTest {
 
             // Then
             StepVerifier.create(userDetailDTOMono)
-                    .verifyComplete();
+                    .expectErrorMatches(error -> error instanceof InvalidCredentialsException &&
+                            error.getMessage().equals("Invalid credentials"))
+                    .verify();
 
             verify(userRepository).findById(USER_ID);
             verify(userRepository, never()).save(any());
