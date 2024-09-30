@@ -13,7 +13,7 @@ import java.util.UUID;
 @Component
 public class UserMapper {
 
-    public User toUser(UserCreationDTO userCreationDTO) {
+    public static User toUser(UserCreationDTO userCreationDTO) {
         return User.builder()
                 .id(UUID.randomUUID())
                 .userName(userCreationDTO.getUserName())
@@ -24,12 +24,13 @@ public class UserMapper {
                 .description(userCreationDTO.getDescription())
                 .password(PasswordUtil.hashPassword(userCreationDTO.getPassword()))
                 .role(userCreationDTO.getRole())
+                .wallet(0D)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
     }
 
-    public UserResponseDTO toUserResponseDTO(User user) {
+    public static UserResponseDTO toUserResponseDTO(User user) {
         return UserResponseDTO.builder()
                 .id(user.getId())
                 .userName(user.getUserName())
@@ -42,7 +43,7 @@ public class UserMapper {
                 .build();
     }
 
-    public UserDetailDTO toUserDetailDTO(User user) {
+    public static UserDetailDTO toUserDetailDTO(User user) {
         return UserDetailDTO.builder()
                 .id(user.getId())
                 .userName(user.getUserName())

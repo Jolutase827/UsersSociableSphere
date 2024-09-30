@@ -1,5 +1,6 @@
 package com.sociablesphere.usersociablesphere.model;
 
+import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -59,4 +60,15 @@ public class User {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    public void updateData(UserCreationDTO userCreationDTO){
+        this.updatedAt = LocalDateTime.now();
+        this.description = userCreationDTO.getDescription();
+        this.email = userCreationDTO.getEmail();
+        this.name = userCreationDTO.getName();
+        this.role = userCreationDTO.getRole();
+        this.userName = userCreationDTO.getUserName();
+        this.photo = userCreationDTO.getPhoto();
+        this.lastName = userCreationDTO.getLastName();
+    }
 }
