@@ -3,269 +3,181 @@ package com.sociablesphere.usersociablesphere.api.controller;
 import com.sociablesphere.usersociablesphere.api.dto.*;
 import com.sociablesphere.usersociablesphere.service.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.web.reactive.server.WebTestClient;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(SpringExtension.class)
 public class UserControllerTest {
 
     @Mock
     private UserService userService;
 
-    private WebTestClient webTestClient;
-
     @InjectMocks
     private UserController userController;
 
+    private UserDetailDTO userDetailDTO;
+    private UserCreationDTO userCreationDTO;
+    private UserLoginDTO userLoginDTO;
+    private UserPasswordDTO userPasswordDTO;
+
     @BeforeEach
     public void setUp() {
-        webTestClient = WebTestClient.bindToController(userController).build();
-    }
+        MockitoAnnotations.openMocks(this);
 
-    @Test
-    public void testGetAllUsers() {
-        // Arrange
-        UserDetailDTO user1 = UserDetailDTO.builder()
-                .id(UUID.randomUUID())
+        UUID userId = UUID.randomUUID();
+
+        userDetailDTO = UserDetailDTO.builder()
+                .id(userId)
                 .userName("john_doe")
                 .name("John")
                 .lastName("Doe")
                 .email("john.doe@example.com")
-                .photo("photo_url")
-                .description("A user")
                 .role("USER")
-                .wallet(100.0)
-                .apiToken("token123")
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .build();
 
-        Flux<UserDetailDTO> users = Flux.just(user1);
+        userCreationDTO = UserCreationDTO.builder()
+                .userName("john_doe")
+                .name("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .password("password123")
+                .role("USER")
+                .build();
 
-        when(userService.findAll()).thenReturn(users);
+        userLoginDTO = UserLoginDTO.builder()
+                .email("john.doe@example.com")
+                .password("password123")
+                .build();
 
-        // Act & Assert
-        webTestClient.get().uri("/v1/users")
-                .accept(APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBodyList(UserDetailDTO.class)
-                .hasSize(1)
-                .consumeWith(response -> {
-                    UserDetailDTO responseBody = response.getResponseBody().get(0);
-                    assert responseBody.getUserName().equals("john_doe");
-                });
+        userPasswordDTO = UserPasswordDTO.builder()
+                .oldPassword("password123")
+                .newPassword("newPassword123")
+                .build();
+    }
+
+    @Test
+    @DisplayName("Test getAllUsers returns all users")
+    public void testGetAllUsers() {
+        // Arrange
+        when(userService.findAll()).thenReturn(Flux.just(userDetailDTO));
+
+        // Act
+        ResponseEntity<Flux<UserDetailDTO>> response = userController.getAllUsers();
+
+        // Assert
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+
+        StepVerifier.create(response.getBody())
+                .expectNext(userDetailDTO)
+                .verifyComplete();
 
         verify(userService, times(1)).findAll();
     }
 
     @Test
+    @DisplayName("Test registerUser registers a new user")
     public void testRegisterUser() {
         // Arrange
-        UserCreationDTO userCreationDTO = UserCreationDTO.builder()
-                .userName("john_doe")
-                .name("John")
-                .lastName("Doe")
-                .email("john.doe@example.com")
-                .photo("photo_url")
-                .description("A user")
-                .password("password123")
-                .role("USER")
-                .build();
-
-        UserDetailDTO userDetailDTO = UserDetailDTO.builder()
-                .id(UUID.randomUUID())
-                .userName("john_doe")
-                .name("John")
-                .lastName("Doe")
-                .email("john.doe@example.com")
-                .photo("photo_url")
-                .description("A user")
-                .role("USER")
-                .wallet(100.0)
-                .apiToken("token123")
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-
         when(userService.register(any(UserCreationDTO.class))).thenReturn(Mono.just(userDetailDTO));
 
-        // Act & Assert
-        webTestClient.post().uri("/v1/users/create")
-                .contentType(APPLICATION_JSON)
-                .bodyValue(userCreationDTO)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(UserDetailDTO.class)
-                .consumeWith(response -> {
-                    UserDetailDTO responseBody = response.getResponseBody();
-                    assert responseBody != null;
-                    assert responseBody.getUserName().equals("john_doe");
-                });
+        // Act
+        ResponseEntity<Mono<UserDetailDTO>> response = userController.registerUser(userCreationDTO);
 
-        verify(userService, times(1)).register(any(UserCreationDTO.class));
+        // Assert
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+
+        StepVerifier.create(response.getBody())
+                .expectNext(userDetailDTO)
+                .verifyComplete();
+
+        verify(userService, times(1)).register(userCreationDTO);
     }
 
     @Test
+    @DisplayName("Test loginUser logs in a user")
     public void testLoginUser() {
         // Arrange
-        UserLoginDTO userLoginDTO = UserLoginDTO.builder()
-                .name("John")
-                .password("password123")
-                .email("john.doe@example.com")
-                .build();
-
-        UserDetailDTO userDetailDTO = UserDetailDTO.builder()
-                .id(UUID.randomUUID())
-                .userName("john_doe")
-                .name("John")
-                .lastName("Doe")
-                .email("john.doe@example.com")
-                .photo("photo_url")
-                .description("A user")
-                .role("USER")
-                .wallet(100.0)
-                .apiToken("token123")
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-
         when(userService.login(any(UserLoginDTO.class))).thenReturn(Mono.just(userDetailDTO));
 
-        // Act & Assert
-        webTestClient.post().uri("/v1/users/login")
-                .contentType(APPLICATION_JSON)
-                .bodyValue(userLoginDTO)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(UserDetailDTO.class)
-                .consumeWith(response -> {
-                    UserDetailDTO responseBody = response.getResponseBody();
-                    assert responseBody != null;
-                    assert responseBody.getEmail().equals("john.doe@example.com");
-                });
+        // Act
+        ResponseEntity<Mono<UserDetailDTO>> response = userController.loginUser(userLoginDTO);
 
-        verify(userService, times(1)).login(any(UserLoginDTO.class));
+        // Assert
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+
+        StepVerifier.create(response.getBody())
+                .expectNext(userDetailDTO)
+                .verifyComplete();
+
+        verify(userService, times(1)).login(userLoginDTO);
     }
 
     @Test
+    @DisplayName("Test patchPassword updates user's password")
     public void testPatchPassword() {
         // Arrange
-        UUID userId = UUID.randomUUID();
-
-        UserPasswordDTO userPasswordDTO = UserPasswordDTO.builder()
-                .oldPassword("oldpassword")
-                .newPassword("newpassword")
-                .build();
-
-        UserDetailDTO userDetailDTO = UserDetailDTO.builder()
-                .id(userId)
-                .userName("john_doe")
-                .name("John")
-                .lastName("Doe")
-                .email("john.doe@example.com")
-                .photo("photo_url")
-                .description("A user")
-                .role("USER")
-                .wallet(100.0)
-                .apiToken("token123")
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-
+        UUID userId = userDetailDTO.getId();
         when(userService.updatePassword(eq(userId), any(UserPasswordDTO.class))).thenReturn(Mono.just(userDetailDTO));
 
-        // Act & Assert
-        webTestClient.patch().uri("/v1/users/{id}/password", userId)
-                .contentType(APPLICATION_JSON)
-                .bodyValue(userPasswordDTO)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(UserDetailDTO.class)
-                .consumeWith(response -> {
-                    UserDetailDTO responseBody = response.getResponseBody();
-                    assert responseBody != null;
-                    assert responseBody.getId().equals(userId);
-                });
+        // Act
+        ResponseEntity<Mono<UserDetailDTO>> response = userController.patchPassword(userId, userPasswordDTO);
 
-        verify(userService, times(1)).updatePassword(eq(userId), any(UserPasswordDTO.class));
+        // Assert
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+
+        StepVerifier.create(response.getBody())
+                .expectNext(userDetailDTO)
+                .verifyComplete();
+
+        verify(userService, times(1)).updatePassword(userId, userPasswordDTO);
     }
 
     @Test
+    @DisplayName("Test updateUser updates user information")
     public void testUpdateUser() {
         // Arrange
-        UUID userId = UUID.randomUUID();
-
-        UserCreationDTO userCreationDTO = UserCreationDTO.builder()
-                .userName("john_doe_updated")
-                .name("John")
-                .lastName("Doe")
-                .email("john.doe@example.com")
-                .photo("new_photo_url")
-                .description("An updated user")
-                .password("password123")
-                .role("USER")
-                .build();
-
-        UserDetailDTO userDetailDTO = UserDetailDTO.builder()
-                .id(userId)
-                .userName("john_doe_updated")
-                .name("John")
-                .lastName("Doe")
-                .email("john.doe@example.com")
-                .photo("new_photo_url")
-                .description("An updated user")
-                .role("USER")
-                .wallet(100.0)
-                .apiToken("token123")
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-
+        UUID userId = userDetailDTO.getId();
         when(userService.updateUser(eq(userId), any(UserCreationDTO.class))).thenReturn(Mono.just(userDetailDTO));
 
-        // Act & Assert
-        webTestClient.put().uri("/v1/users/{id}", userId)
-                .contentType(APPLICATION_JSON)
-                .bodyValue(userCreationDTO)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(UserDetailDTO.class)
-                .consumeWith(response -> {
-                    UserDetailDTO responseBody = response.getResponseBody();
-                    assert responseBody != null;
-                    assert responseBody.getUserName().equals("john_doe_updated");
-                });
+        // Act
+        ResponseEntity<Mono<UserDetailDTO>> response = userController.updateUser(userId, userCreationDTO);
 
-        verify(userService, times(1)).updateUser(eq(userId), any(UserCreationDTO.class));
+        // Assert
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+
+        StepVerifier.create(response.getBody())
+                .expectNext(userDetailDTO)
+                .verifyComplete();
+
+        verify(userService, times(1)).updateUser(userId, userCreationDTO);
     }
 
     @Test
+    @DisplayName("Test deleteUser deletes a user account")
     public void testDeleteUser() {
         // Arrange
         UUID apiToken = UUID.randomUUID();
-
         doNothing().when(userService).deleteAcount(apiToken);
 
-        // Act & Assert
-        webTestClient.delete().uri("/v1/users/{apiToken}", apiToken)
-                .exchange()
-                .expectStatus().isNoContent();
+        // Act
+        ResponseEntity<Void> response = userController.deleteUser(apiToken);
 
+        // Assert
+        assertThat(response.getStatusCodeValue()).isEqualTo(204);
         verify(userService, times(1)).deleteAcount(apiToken);
     }
 }
