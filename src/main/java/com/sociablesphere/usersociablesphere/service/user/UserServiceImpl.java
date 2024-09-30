@@ -36,10 +36,10 @@ public class UserServiceImpl implements UserService{
                     if (existsByUserName) {
                         return Mono.error(new UserAlreadyExistsException("Username is already taken."));
                     }
-                    User user = UserMapper.toUser(newUser);
-                    return userRepository.save(user)
+                    return userRepository.save(UserMapper.toUser(newUser))
                             .map(UserMapper::toUserDetailDTO);
                 });
+
     }
 
     @Override
