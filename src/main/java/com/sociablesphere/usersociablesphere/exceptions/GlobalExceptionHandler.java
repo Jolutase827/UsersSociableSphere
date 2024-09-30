@@ -35,6 +35,11 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(401, "Invalid credentials");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleNumberFormatException(UserNotFoundException e, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(409, e.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
