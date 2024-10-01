@@ -11,7 +11,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -19,7 +18,7 @@ import java.util.UUID;
 @Entity
 @Builder
 @Table(name = "users")
-public class User {
+public class users {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false)

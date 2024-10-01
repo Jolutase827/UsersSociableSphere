@@ -1,14 +1,14 @@
 package com.sociablesphere.usersociablesphere.repository;
-import com.sociablesphere.usersociablesphere.model.User;
+import com.sociablesphere.usersociablesphere.model.users;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
 @Repository
-public interface UserRepository extends R2dbcRepository<User,Long> {
+public interface UserRepository extends R2dbcRepository<users,Long> {
 
-    public Mono<User> findByUserName(String userName);
-    public Mono<User> findByEmail(String email);
+    public Mono<users> findByUserName(String userName);
+    public Mono<users> findByEmail(String email);
 }
 
 

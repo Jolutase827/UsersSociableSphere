@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class UserServiceImplTest {
+class usersServiceImplTest {
 
 
     @MockBean
@@ -25,7 +25,7 @@ class UserServiceImplTest {
 
     @Nested
     @DisplayName("Register user")
-    class RegisterUser{
+    class RegisterUsers {
         @Test
         @DisplayName("Given a valid user,Then sing up and return user details")
         void registerValidUser() {
