@@ -26,49 +26,55 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NumberFormatException.class)
     public ResponseEntity<ErrorResponse> handleNumberFormatException(NumberFormatException e, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse(400, "Invalid input");
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Invalid input");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<ErrorResponse> handleNumberFormatException(InvalidCredentialsException e, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse(401, "Invalid credentials");
+    public ResponseEntity<ErrorResponse> handleInvalidCredentialsException(InvalidCredentialsException e, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "Invalid credentials");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleUserAlreadyExistsException(UserAlreadyExistsException e, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.CONFLICT.value(), e.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
         BindingResult result = ex.getBindingResult();
         List<FieldError> fieldErrors = result.getFieldErrors();
-        String errorMessage = "Validation failed: ";
+        StringBuilder errorMessage = new StringBuilder("Validation failed: ");
         for (FieldError fieldError : fieldErrors) {
-            errorMessage += fieldError.getDefaultMessage() + "; ";
+            errorMessage.append(fieldError.getDefaultMessage()).append("; ");
         }
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), errorMessage);
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), errorMessage.toString());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<ErrorResponse> handleCartNotSuchElement(NoSuchElementException e, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse(404, e.getMessage());
+    public ResponseEntity<ErrorResponse> handleNoSuchElementException(NoSuchElementException e, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     @ExceptionHandler(ExecutionControl.InternalException.class)
-    public ResponseEntity<ErrorResponse> handleGeneralException(InternalError e, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse(500, e.getMessage());
+    public ResponseEntity<ErrorResponse> handleInternalException(ExecutionControl.InternalException e, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
     @ExceptionHandler(ExternalMicroserviceException.class)
     public ResponseEntity<ErrorResponse> handleExternalMicroserviceException(ExternalMicroserviceException e, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse(500, e.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException e, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse(404, e.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 }
