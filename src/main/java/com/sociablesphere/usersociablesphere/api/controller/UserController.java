@@ -1,16 +1,13 @@
 package com.sociablesphere.usersociablesphere.api.controller;
 
 import com.sociablesphere.usersociablesphere.api.dto.*;
-import com.sociablesphere.usersociablesphere.model.User;
 import com.sociablesphere.usersociablesphere.service.user.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
 import java.util.UUID;
-
-import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/v1/users")
@@ -25,12 +22,12 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<Flux<UserDetailDTO>> getAllUsers() {
-        Flux<UserDetailDTO> users = userService.findAll(); // Asegúrate de que el método esté en UserService
+        Flux<UserDetailDTO> users = userService.findAll();
         return ResponseEntity.ok(users);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Mono<UserDetailDTO>> registerUser (@RequestBody UserCreationDTO userCreationDTO){
+    public ResponseEntity<Mono<UserDetailDTO>> registerUser (@Valid @RequestBody UserCreationDTO userCreationDTO){
         Mono<UserDetailDTO> user = userService.register(userCreationDTO);
         return ResponseEntity.ok(user);
     }

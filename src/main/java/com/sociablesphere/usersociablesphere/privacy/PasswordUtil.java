@@ -3,7 +3,6 @@ package com.sociablesphere.usersociablesphere.privacy;
 import com.sociablesphere.usersociablesphere.exceptions.InvalidCredentialsException;
 import org.mindrot.jbcrypt.BCrypt;
 
-
 public class PasswordUtil {
 
     public static String hashPassword(String plainPassword) {
