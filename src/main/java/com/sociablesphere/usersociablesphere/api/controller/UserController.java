@@ -47,9 +47,9 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @DeleteMapping("/{apiToken}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long apiToken) {
-        userService.deleteAcount(apiToken);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userService.deleteAcount(id);
         return ResponseEntity.noContent().build();
     }
 }

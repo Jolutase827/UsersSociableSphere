@@ -8,6 +8,7 @@ import com.sociablesphere.usersociablesphere.privacy.PasswordUtil;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Random;
 
 @Component
 public class UserMapper {
@@ -23,9 +24,17 @@ public class UserMapper {
                 .password(PasswordUtil.hashPassword(userCreationDTO.getPassword()))
                 .role(userCreationDTO.getRole())
                 .wallet(0D)
+                .apiToken(generateRandomApiToken())  // Método para generar el token
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
+    }
+
+    private static String generateRandomApiToken() {
+        long randomLong = Math.abs(new Random().nextLong());
+        String apiToken = Long.toString(randomLong);
+
+        return apiToken.length() <= 255 ? apiToken : apiToken.substring(0, 255);
     }
 
     public static UserResponseDTO toUserResponseDTO(users users) {
