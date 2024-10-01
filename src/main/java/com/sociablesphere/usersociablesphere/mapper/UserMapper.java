@@ -15,7 +15,6 @@ public class UserMapper {
 
     public static User toUser(UserCreationDTO userCreationDTO) {
         return User.builder()
-                .id(UUID.randomUUID())
                 .userName(userCreationDTO.getUserName())
                 .name(userCreationDTO.getName())
                 .lastName(userCreationDTO.getLastName())

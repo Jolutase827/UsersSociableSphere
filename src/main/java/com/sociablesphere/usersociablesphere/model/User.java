@@ -23,7 +23,7 @@ public class User {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false)
-    private UUID id;
+    private Long id;
 
     @Column(name = "user_name", nullable = false, unique = true)
     private String userName;

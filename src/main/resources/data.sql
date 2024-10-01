@@ -1,5 +1,5 @@
 CREATE TABLE users (
-    id UUID PRIMARY KEY,
+    id BIGINT PRIMARY KEY,
     user_name VARCHAR(255) NOT NULL UNIQUE,
     name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
@@ -13,40 +13,14 @@ CREATE TABLE users (
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL
 );
-
--- Datos de ejemplo para la tabla 'users'
 INSERT INTO users (
     id, user_name, name, last_name, email, photo, description, password, role, wallet, api_token, created_at, updated_at
 ) VALUES (
-    '550e8400-e29b-41d4-a716-446655440000',
-    'johndoe',
-    'John',
-    'Doe',
-    'johndoe@example.com',
-    'https://th.bing.com/th/id/R.660ba35a6fdaf53661d654625447a8de?rik=LIDc4v6h%2bfGJrg&pid=ImgRaw&r=0',
-    'A regular user',
-    'hashed_password_example',
-    'USER',
-    100.50,
-    'some-api-token',
-    NOW(),
-    NOW()
+    1, 'john_doe', 'John', 'Doe', 'john.doe@example.com', 'https://example.com/photos/john.jpg', 'Software Engineer with 10 years of experience.', 'hashedpassword123', 'USER', 100.50, 'api_token_12345', NOW(), NOW()
 );
+
 INSERT INTO users (
     id, user_name, name, last_name, email, photo, description, password, role, wallet, api_token, created_at, updated_at
 ) VALUES (
-    '123e4567-e89b-12d3-a456-426614174000',
-    'maryjane',
-    'Mary',
-    'Jane',
-    'maryjane@example.com',
-    'https://example.com/jane_photo.jpg',
-    'Enthusiastic community member',
-    'hashed_password_example2',
-    'ADMIN',
-    250.75,
-    'another-api-token',
-    NOW(),
-    NOW()
+    2, 'jane_smith', 'Jane', 'Smith', 'jane.smith@example.com', 'https://example.com/photos/jane.jpg', 'Project Manager specializing in IT projects.', 'hashedpassword456', 'ADMIN', 250.00, 'api_token_67890', NOW(), NOW()
 );
-

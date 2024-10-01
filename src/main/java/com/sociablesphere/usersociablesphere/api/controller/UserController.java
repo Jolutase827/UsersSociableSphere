@@ -14,7 +14,6 @@ import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/v1/users")
-
 public class UserController {
 
     UserService userService;
@@ -42,19 +41,19 @@ public class UserController {
     }
 
     @PatchMapping("/{id}/password")
-    public ResponseEntity<Mono<UserDetailDTO>> patchPassword (@PathVariable UUID id, @RequestBody UserPasswordDTO userPassword){
+    public ResponseEntity<Mono<UserDetailDTO>> patchPassword (@PathVariable Long id, @RequestBody UserPasswordDTO userPassword){
         Mono<UserDetailDTO> user = userService.updatePassword(id, userPassword);
         return ResponseEntity.ok(user);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Mono<UserDetailDTO>> updateUser (@PathVariable UUID id, @RequestBody UserCreationDTO dataToUpdate){
+    public ResponseEntity<Mono<UserDetailDTO>> updateUser (@PathVariable Long id, @RequestBody UserCreationDTO dataToUpdate){
         Mono<UserDetailDTO> user = userService.updateUser(id,dataToUpdate);
         return ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/{apiToken}")
-    public ResponseEntity<Void> deleteUser(@PathVariable UUID apiToken) {
+    public ResponseEntity<Void> deleteUser(@PathVariable Long apiToken) {
         userService.deleteAcount(apiToken);
         return ResponseEntity.noContent().build();
     }
