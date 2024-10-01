@@ -2,13 +2,12 @@ spring:
   application:
     name: UserSociableSphere
 
-  security:
-    user:
-      name: user
-      password: user
-
   r2dbc:
-    url: r2dbc:mysql://localhost:3306/UsersSocialSphere
-    username: users
-    password: users
+    url: r2dbc:mysql://ugv3eam0kly3dszy:esHA6Jl0UbfDSWGatObJ@b4kifbvseeho1hfhwmeq-mysql.services.clever-cloud.com:3306/b4kifbvseeho1hfhwmeq
+    username: ugv3eam0kly3dszy
+    password: esHA6Jl0UbfDSWGatObJ
 
+  data:
+    r2dbc:
+      repositories:
+        enabled: true

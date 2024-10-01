@@ -1,5 +1,5 @@
 CREATE TABLE users (
-    id UUID PRIMARY KEY,
+    id Bi PRIMARY KEY,
     user_name VARCHAR(255) NOT NULL UNIQUE,
     name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
