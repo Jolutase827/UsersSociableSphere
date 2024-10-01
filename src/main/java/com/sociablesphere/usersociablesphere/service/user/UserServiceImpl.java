@@ -5,15 +5,13 @@ import com.sociablesphere.usersociablesphere.exceptions.InvalidCredentialsExcept
 import com.sociablesphere.usersociablesphere.exceptions.UserAlreadyExistsException;
 import com.sociablesphere.usersociablesphere.exceptions.UserNotFoundException;
 import com.sociablesphere.usersociablesphere.mapper.UserMapper;
-import com.sociablesphere.usersociablesphere.model.User;
+import com.sociablesphere.usersociablesphere.model.users;
 import com.sociablesphere.usersociablesphere.privacy.PasswordUtil;
 import com.sociablesphere.usersociablesphere.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -43,8 +41,8 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public Mono<UserDetailDTO> updateUser(UUID id, UserCreationDTO dataToModify) {
-        Mono<User> userMono = userRepository.findById(id)
+    public Mono<UserDetailDTO> updateUser(Long id, UserCreationDTO dataToModify) {
+        Mono<users> userMono = userRepository.findById(id)
                                     .switchIfEmpty(Mono.error(new UserNotFoundException("The user with the id "+id+
                                                                                         " doesn't exists.")));;
         return userMono
@@ -57,7 +55,7 @@ public class UserServiceImpl implements UserService{
 
 
     @Override
-    public Mono<Void> deleteAcount(UUID id) {
+    public Mono<Void> deleteAcount(Long id) {
         return userRepository.findById(id)
                 .switchIfEmpty(Mono.error(new UserNotFoundException("The user with the id " + id + " doesn't exist.")))
                 .flatMap(user -> userRepository.deleteById(id));
@@ -73,8 +71,8 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public Mono<UserDetailDTO> updatePassword(UUID id, UserPasswordDTO passwordToUpdate) {
-        Mono<User> userMono = userRepository.findById(id)
+    public Mono<UserDetailDTO> updatePassword(Long id, UserPasswordDTO passwordToUpdate) {
+        Mono<users> userMono = userRepository.findById(id)
                                         .switchIfEmpty(Mono.error(new UserNotFoundException("The user with the id "+id+
                                                                                             " doesn't exists.")));
         return userMono

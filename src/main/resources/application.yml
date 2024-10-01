@@ -1,17 +1,11 @@
 spring:
   application:
     name: UserSociableSphere
-
-  r2dbc:
-    url: r2dbc:mysql://ugv3eam0kly3dszy:esHA6Jl0UbfDSWGatObJ@b4kifbvseeho1hfhwmeq-mysql.services.clever-cloud.com:3306/b4kifbvseeho1hfhwmeq
-    username: ugv3eam0kly3dszy
-    password: esHA6Jl0UbfDSWGatObJ
-
   data:
     r2dbc:
       repositories:
         enabled: true
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
+  r2dbc:
+    url: r2dbc:postgresql://socialsphere_root:socialsphere@postgresql-socialsphere.alwaysdata.net:5432/socialsphere_users
+    username: socialsphere_root
+    password: socialsphere

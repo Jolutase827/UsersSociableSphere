@@ -15,7 +15,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import java.util.UUID;
+import java.lang.Long;
+import java.util.Long;
+import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -38,7 +40,7 @@ public class UserControllerTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        UUID userId = UUID.randomUUID();
+        Long userId = Long.randomLong();
 
         userDetailDTO = UserDetailDTO.builder()
                 .id(userId)
@@ -130,7 +132,7 @@ public class UserControllerTest {
     @DisplayName("Test patchPassword updates user's password")
     public void testPatchPassword() {
         // Arrange
-        UUID userId = userDetailDTO.getId();
+        Long userId = userDetailDTO.getId();
         when(userService.updatePassword(eq(userId), any(UserPasswordDTO.class))).thenReturn(Mono.just(userDetailDTO));
 
         // Act
@@ -150,7 +152,7 @@ public class UserControllerTest {
     @DisplayName("Test updateUser updates user information")
     public void testUpdateUser() {
         // Arrange
-        UUID userId = userDetailDTO.getId();
+        Long userId = userDetailDTO.getId();
         when(userService.updateUser(eq(userId), any(UserCreationDTO.class))).thenReturn(Mono.just(userDetailDTO));
 
         // Act
@@ -170,14 +172,14 @@ public class UserControllerTest {
     @DisplayName("Test deleteUser deletes a user account")
     public void testDeleteUser() {
         // Arrange
-        UUID apiToken = UUID.randomUUID();
-        when(userService.deleteAcount(apiToken)).thenReturn(Mono.empty());
+        Long id = Long.valueOf(Long.toString(Math.abs(new Random().nextLong())));
+        when(userService.deleteAcount(id)).thenReturn(Mono.empty());
 
         // Act
-        ResponseEntity<Void> response = userController.deleteUser(apiToken);
+        ResponseEntity<Void> response = userController.deleteUser(id);
 
         // Assert
         assertThat(response.getStatusCodeValue()).isEqualTo(204);
-        verify(userService, times(1)).deleteAcount(apiToken);
+        verify(userService, times(1)).deleteAcount(id);
     }
 }

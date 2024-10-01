@@ -1,14 +1,16 @@
 package com.sociablesphere.usersociablesphere.service.Data;
 
 import com.sociablesphere.usersociablesphere.api.dto.*;
-import com.sociablesphere.usersociablesphere.model.User;
-import com.sociablesphere.usersociablesphere.privacy.PasswordUtil;
 
-import java.util.UUID;
+import java.lang.Long;
+import java.util.Random;
+
+import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
+
 
 public class DataUserServiceImplTest {
 
-    public final static UUID USER_ID = UUID.randomUUID();
+    public final static Long USER_ID = java.lang.Long.valueOf(java.lang.Long.toString(Math.abs(new Random().nextLong())));
 
     public final static UserCreationDTO USER_RETURN = UserCreationDTO.builder()
             .userName("JoseLuis")

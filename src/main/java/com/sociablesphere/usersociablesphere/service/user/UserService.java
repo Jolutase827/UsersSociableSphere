@@ -11,10 +11,10 @@ import java.util.UUID;
 public interface UserService {
 
     Mono<UserDetailDTO> register(UserCreationDTO newUser);
-    Mono<UserDetailDTO> updateUser(UUID id, UserCreationDTO dataToModify);
-    Mono<Void> deleteAcount(UUID id);
+    Mono<UserDetailDTO> updateUser(Long id, UserCreationDTO dataToModify);
+    Mono<Void> deleteAcount(Long id);
     Mono<UserDetailDTO> login(UserLoginDTO userToLogin);
-    Mono<UserDetailDTO> updatePassword (UUID id, UserPasswordDTO passwordToUpdate);
+    Mono<UserDetailDTO> updatePassword (Long id, UserPasswordDTO passwordToUpdate);
     Flux<UserDetailDTO> findAll();
 
 

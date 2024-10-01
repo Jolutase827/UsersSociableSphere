@@ -9,7 +9,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Generated
 @Data
@@ -19,7 +18,7 @@ import java.util.UUID;
 public class UserDetailDTO {
 
     @NotNull(message = "El ID no puede ser nulo")
-    private UUID id;
+    private Long id;
 
     @NotBlank(message = "El nombre de usuario no puede estar vacío")
     private String userName;

@@ -3,19 +3,18 @@ package com.sociablesphere.usersociablesphere.mapper;
 import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserDetailDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserResponseDTO;
-import com.sociablesphere.usersociablesphere.model.User;
+import com.sociablesphere.usersociablesphere.model.users;
 import com.sociablesphere.usersociablesphere.privacy.PasswordUtil;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.Random;
 
 @Component
 public class UserMapper {
 
-    public static User toUser(UserCreationDTO userCreationDTO) {
-        return User.builder()
-                .id(UUID.randomUUID())
+    public static users toUser(UserCreationDTO userCreationDTO) {
+        return users.builder()
                 .userName(userCreationDTO.getUserName())
                 .name(userCreationDTO.getName())
                 .lastName(userCreationDTO.getLastName())
@@ -25,38 +24,46 @@ public class UserMapper {
                 .password(PasswordUtil.hashPassword(userCreationDTO.getPassword()))
                 .role(userCreationDTO.getRole())
                 .wallet(0D)
+                .apiToken(generateRandomApiToken())  // Método para generar el token
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
     }
 
-    public static UserResponseDTO toUserResponseDTO(User user) {
+    private static String generateRandomApiToken() {
+        long randomLong = Math.abs(new Random().nextLong());
+        String apiToken = Long.toString(randomLong);
+
+        return apiToken.length() <= 255 ? apiToken : apiToken.substring(0, 255);
+    }
+
+    public static UserResponseDTO toUserResponseDTO(users users) {
         return UserResponseDTO.builder()
-                .id(user.getId())
-                .userName(user.getUserName())
-                .name(user.getName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .photo(user.getPhoto())
-                .description(user.getDescription())
-                .role(user.getRole())
+                .id(users.getId())
+                .userName(users.getUserName())
+                .name(users.getName())
+                .lastName(users.getLastName())
+                .email(users.getEmail())
+                .photo(users.getPhoto())
+                .description(users.getDescription())
+                .role(users.getRole())
                 .build();
     }
 
-    public static UserDetailDTO toUserDetailDTO(User user) {
+    public static UserDetailDTO toUserDetailDTO(users users) {
         return UserDetailDTO.builder()
-                .id(user.getId())
-                .userName(user.getUserName())
-                .name(user.getName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .photo(user.getPhoto())
-                .description(user.getDescription())
-                .role(user.getRole())
-                .wallet(user.getWallet())
-                .apiToken(user.getApiToken())
-                .createdAt(user.getCreatedAt())
-                .updatedAt(user.getUpdatedAt())
+                .id(users.getId())
+                .userName(users.getUserName())
+                .name(users.getName())
+                .lastName(users.getLastName())
+                .email(users.getEmail())
+                .photo(users.getPhoto())
+                .description(users.getDescription())
+                .role(users.getRole())
+                .wallet(users.getWallet())
+                .apiToken(users.getApiToken())
+                .createdAt(users.getCreatedAt())
+                .updatedAt(users.getUpdatedAt())
                 .build();
     }
 }

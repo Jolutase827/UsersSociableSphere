@@ -6,7 +6,7 @@ import com.sociablesphere.usersociablesphere.exceptions.InvalidCredentialsExcept
 import com.sociablesphere.usersociablesphere.exceptions.UserAlreadyExistsException;
 import com.sociablesphere.usersociablesphere.exceptions.UserNotFoundException;
 import com.sociablesphere.usersociablesphere.mapper.UserMapper;
-import com.sociablesphere.usersociablesphere.model.User;
+import com.sociablesphere.usersociablesphere.model.users;
 import com.sociablesphere.usersociablesphere.repository.UserRepository;
 import static com.sociablesphere.usersociablesphere.service.Data.DataUserServiceImplTest.*;
 
@@ -24,11 +24,13 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import java.util.UUID;
+import java.lang.Long;
+import java.util.Random;
+
 
 
 @ExtendWith(MockitoExtension.class)
-class UserServiceImplTest {
+class usersServiceImplTest {
 
 
     @Mock
@@ -39,12 +41,12 @@ class UserServiceImplTest {
 
     @Nested
     @DisplayName("Register user")
-    class RegisterUser{
+    class RegisterUsers {
         @Test
         @DisplayName("Given a valid user,Then sing up and return user details")
         void registerValidUser() {
             //Given
-            User userEntity = UserMapper.toUser(USER_RETURN);
+            users userEntity = UserMapper.toUser(USER_RETURN);
             when(userRepository.save(any())).thenReturn(Mono.just(userEntity));
             when(userRepository.findByEmail(any())).thenReturn(Mono.empty());
             when(userRepository.findByUserName(USER_RETURN.getUserName())).thenReturn(Mono.empty());
@@ -71,7 +73,7 @@ class UserServiceImplTest {
         @DisplayName("Given a user with userName that already exists," +
                     " Then throw an UserAlreadyExistsException with username message")
         void registerErrorSameName() {
-            User userEntity = UserMapper.toUser(USER_RETURN);
+            users userEntity = UserMapper.toUser(USER_RETURN);
             when(userRepository.findByEmail(any())).thenReturn(Mono.empty());
             when(userRepository.findByUserName(USER_RETURN.getUserName())).thenReturn(Mono.just(userEntity));
 
@@ -95,7 +97,7 @@ class UserServiceImplTest {
                 " Then throw an UserAlreadyExistsException with email message")
         void registerErrorSameEmail() {
             //Given
-            User userEntity = UserMapper.toUser(USER_RETURN);
+            users userEntity = UserMapper.toUser(USER_RETURN);
             when(userRepository.findByEmail(any())).thenReturn(Mono.just(userEntity));
 
 
@@ -122,8 +124,8 @@ class UserServiceImplTest {
         @DisplayName("Given valid user ID and correct old password, Then update the password")
         void updatePasswordValid() {
             // Given
-            User userEntity = UserMapper.toUser(USER_RETURN);
-            when(userRepository.findById((UUID) any())).thenReturn(Mono.just(userEntity));
+            users userEntity = UserMapper.toUser(USER_RETURN);
+            when(userRepository.findById((anyLong())).thenReturn(Mono.just(userEntity)));
             when(userRepository.save(any())).thenReturn(Mono.just(userEntity));
 
             // When
@@ -139,7 +141,7 @@ class UserServiceImplTest {
                     })
                     .verifyComplete();
 
-            verify(userRepository).findById((UUID) any());
+            verify(userRepository).findById((anyLong()));
             verify(userRepository).save(any());
         }
 
@@ -147,8 +149,8 @@ class UserServiceImplTest {
         @DisplayName("Given valid user ID and incorrect old password, Then throw InvalidCredentialsException")
         void updatePasswordInValid() {
             // Given
-            User userEntity = UserMapper.toUser(USER_RETURN);
-            when(userRepository.findById((UUID) any())).thenReturn(Mono.just(userEntity));
+            users userEntity = UserMapper.toUser(USER_RETURN);
+            when(userRepository.findById((anyLong())).thenReturn(Mono.just(userEntity)));
 
             // When
             Mono<UserDetailDTO> userDetailDTOMono = userService.updatePassword(USER_ID, USER_WRONG_PASSWORD_DTO);
@@ -159,14 +161,14 @@ class UserServiceImplTest {
                             error.getMessage().equals("Invalid credentials"))
                     .verify();
 
-            verify(userRepository).findById((UUID) any());
+            verify(userRepository).findById(anyLong());
         }
 
         @Test
         @DisplayName("Given a non-existing user ID, Then throw UserNotFoundException")
         void updatePasswordUserNotFound() {
             // Given
-            when(userRepository.findById((UUID) any())).thenReturn(Mono.empty());
+            when(userRepository.findById(anyLong()).thenReturn(Mono.empty()));
 
             // When
             Mono<UserDetailDTO> userDetailDTOMono = userService.updatePassword(USER_ID, USER_PASSWORD_DTO);
@@ -177,7 +179,7 @@ class UserServiceImplTest {
                             error.getMessage().equals("The user with the id " + USER_ID + " doesn't exists."))
                     .verify();
 
-            verify(userRepository).findById((UUID) any());
+            verify(userRepository).findById(anyLong());
             verify(userRepository, never()).save(any());
         }
     }
@@ -189,7 +191,7 @@ class UserServiceImplTest {
         @DisplayName("Find all users and return their details")
         void findAllUsers() {
             // Given
-            User userEntity = UserMapper.toUser(USER_RETURN);
+            users userEntity = UserMapper.toUser(USER_RETURN);
             when(userRepository.findAll()).thenReturn(Flux.just(userEntity));
 
             // When
@@ -217,7 +219,7 @@ class UserServiceImplTest {
         @DisplayName("Given valid email and password, Then return user details")
         void loginUserValid() {
             // Given
-            User userEntity = UserMapper.toUser(USER_RETURN);
+            users userEntity = UserMapper.toUser(USER_RETURN);
             when(userRepository.findByEmail(any())).thenReturn(Mono.just(userEntity));
             when(userRepository.findByUserName(any())).thenReturn(Mono.just(userEntity));
 
@@ -270,7 +272,7 @@ class UserServiceImplTest {
         @DisplayName("Given valid user ID and correct password, Then update the user details")
         void updateUserValid() {
             // Given
-            User userEntity = UserMapper.toUser(USER_RETURN);
+            users userEntity = UserMapper.toUser(USER_RETURN);
             when(userRepository.findById(USER_ID)).thenReturn(Mono.just(userEntity));
             when(userRepository.save(any())).thenReturn(Mono.just(userEntity));
 
@@ -314,7 +316,7 @@ class UserServiceImplTest {
         @DisplayName("Given valid user ID but incorrect current password, Then do not update and return error")
         void updateUserInvalidPassword() {
             // Given
-            User userEntity = UserMapper.toUser(USER_RETURN);
+            users userEntity = UserMapper.toUser(USER_RETURN);
 
 
             when(userRepository.findById(USER_ID)).thenReturn(Mono.just(userEntity));
@@ -340,7 +342,7 @@ class UserServiceImplTest {
         @DisplayName("Given a valid user ID, Then delete the user successfully")
         void deleteAccountValid() {
             // Given
-            UUID userId = UUID.randomUUID();
+            Long userId = Long.valueOf(Long.toString(Math.abs(new Random().nextLong())));
             when(userRepository.findById(userId)).thenReturn(Mono.just(UserMapper.toUser(USER_RETURN)));
             when(userRepository.deleteById(userId)).thenReturn(Mono.empty());
 
@@ -359,7 +361,7 @@ class UserServiceImplTest {
         @DisplayName("Given a non-existing user ID, Then throw UserNotFoundException")
         void deleteAccountUserNotFound() {
             // Given
-            UUID userId = UUID.randomUUID();
+            Long userId = Long.valueOf(Long.toString(Math.abs(new Random().nextLong())));
             when(userRepository.findById(userId)).thenReturn(Mono.empty());
 
             // When
@@ -372,7 +374,7 @@ class UserServiceImplTest {
                     .verify();
 
             verify(userRepository).findById(userId);
-            verify(userRepository, never()).deleteById((UUID) any());
+            verify(userRepository, never()).deleteById((Long) any());
         }
     }
 
