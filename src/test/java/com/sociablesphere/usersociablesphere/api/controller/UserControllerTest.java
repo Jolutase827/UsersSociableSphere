@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -16,7 +17,9 @@ import reactor.test.StepVerifier;
 
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
+
 @ExtendWith(SpringExtension.class)
 public class UserControllerTest {
 
@@ -73,10 +76,12 @@ public class UserControllerTest {
         when(userService.findAll()).thenReturn(Flux.just(userDetailDTO));
 
         // Act
-        Flux<UserDetailDTO> response = userController.getAllUsers();
+        ResponseEntity<Flux<UserDetailDTO>> response = userController.getAllUsers();
 
         // Assert
-        StepVerifier.create(response)
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+
+        StepVerifier.create(response.getBody())
                 .expectNext(userDetailDTO)
                 .verifyComplete();
 
@@ -90,10 +95,12 @@ public class UserControllerTest {
         when(userService.register(any(UserCreationDTO.class))).thenReturn(Mono.just(userDetailDTO));
 
         // Act
-        Mono<UserDetailDTO> response = userController.registerUser(userCreationDTO);
+        ResponseEntity<Mono<UserDetailDTO>> response = userController.registerUser(userCreationDTO);
 
         // Assert
-        StepVerifier.create(response)
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+
+        StepVerifier.create(response.getBody())
                 .expectNext(userDetailDTO)
                 .verifyComplete();
 
@@ -107,10 +114,12 @@ public class UserControllerTest {
         when(userService.login(any(UserLoginDTO.class))).thenReturn(Mono.just(userDetailDTO));
 
         // Act
-        Mono<UserDetailDTO> response = userController.loginUser(userLoginDTO);
+        ResponseEntity<Mono<UserDetailDTO>> response = userController.loginUser(userLoginDTO);
 
         // Assert
-        StepVerifier.create(response)
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+
+        StepVerifier.create(response.getBody())
                 .expectNext(userDetailDTO)
                 .verifyComplete();
 
@@ -125,10 +134,12 @@ public class UserControllerTest {
         when(userService.updatePassword(eq(userId), any(UserPasswordDTO.class))).thenReturn(Mono.just(userDetailDTO));
 
         // Act
-        Mono<UserDetailDTO> response = userController.patchPassword(userId, userPasswordDTO);
+        ResponseEntity<Mono<UserDetailDTO>> response = userController.patchPassword(userId, userPasswordDTO);
 
         // Assert
-        StepVerifier.create(response)
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+
+        StepVerifier.create(response.getBody())
                 .expectNext(userDetailDTO)
                 .verifyComplete();
 
@@ -143,10 +154,12 @@ public class UserControllerTest {
         when(userService.updateUser(eq(userId), any(UserCreationDTO.class))).thenReturn(Mono.just(userDetailDTO));
 
         // Act
-        Mono<UserDetailDTO> response = userController.updateUser(userId, userCreationDTO);
+        ResponseEntity<Mono<UserDetailDTO>> response = userController.updateUser(userId, userCreationDTO);
 
         // Assert
-        StepVerifier.create(response)
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+
+        StepVerifier.create(response.getBody())
                 .expectNext(userDetailDTO)
                 .verifyComplete();
 
@@ -161,12 +174,10 @@ public class UserControllerTest {
         when(userService.deleteAcount(apiToken)).thenReturn(Mono.empty());
 
         // Act
-        Mono<Void> response = userController.deleteUser(apiToken);
+        ResponseEntity<Void> response = userController.deleteUser(apiToken);
 
         // Assert
-        StepVerifier.create(response)
-                .verifyComplete();
-
+        assertThat(response.getStatusCodeValue()).isEqualTo(204);
         verify(userService, times(1)).deleteAcount(apiToken);
     }
 }
