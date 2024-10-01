@@ -57,11 +57,10 @@ public class UserServiceImpl implements UserService{
 
 
     @Override
-    public void deleteAcount(UUID id) {
-        userRepository.findById(id)
+    public Mono<Void> deleteAcount(UUID id) {
+        return userRepository.findById(id)
                 .switchIfEmpty(Mono.error(new UserNotFoundException("The user with the id " + id + " doesn't exist.")))
-                .flatMap(user -> userRepository.deleteById(id))
-                .subscribe();
+                .flatMap(user -> userRepository.deleteById(id));
     }
 
     @Override
