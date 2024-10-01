@@ -171,7 +171,7 @@ public class UserControllerTest {
     public void testDeleteUser() {
         // Arrange
         UUID apiToken = UUID.randomUUID();
-        doNothing().when(userService).deleteAcount(apiToken);
+        when(userService.deleteAcount(apiToken)).thenReturn(Mono.empty());
 
         // Act
         ResponseEntity<Void> response = userController.deleteUser(apiToken);

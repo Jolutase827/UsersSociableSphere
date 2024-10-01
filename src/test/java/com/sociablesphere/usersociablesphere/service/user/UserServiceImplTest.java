@@ -333,5 +333,48 @@ class UserServiceImplTest {
         }
     }
 
+    @Nested
+    @DisplayName("Delete Account")
+    class DeleteAccount {
+        @Test
+        @DisplayName("Given a valid user ID, Then delete the user successfully")
+        void deleteAccountValid() {
+            // Given
+            UUID userId = UUID.randomUUID();
+            when(userRepository.findById(userId)).thenReturn(Mono.just(UserMapper.toUser(USER_RETURN)));
+            when(userRepository.deleteById(userId)).thenReturn(Mono.empty());
+
+            // When
+            Mono<Void> result = userService.deleteAcount(userId);
+
+            // Then
+            StepVerifier.create(result)
+                    .verifyComplete();
+
+            verify(userRepository).findById(userId);
+            verify(userRepository).deleteById(userId);
+        }
+
+        @Test
+        @DisplayName("Given a non-existing user ID, Then throw UserNotFoundException")
+        void deleteAccountUserNotFound() {
+            // Given
+            UUID userId = UUID.randomUUID();
+            when(userRepository.findById(userId)).thenReturn(Mono.empty());
+
+            // When
+            Mono<Void> result = userService.deleteAcount(userId);
+
+            // Then
+            StepVerifier.create(result)
+                    .expectErrorMatches(error -> error instanceof UserNotFoundException &&
+                            error.getMessage().equals("The user with the id " + userId + " doesn't exist."))
+                    .verify();
+
+            verify(userRepository).findById(userId);
+            verify(userRepository, never()).deleteById((UUID) any());
+        }
+    }
+
 
 }

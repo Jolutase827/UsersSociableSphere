@@ -12,7 +12,7 @@ public interface UserService {
 
     Mono<UserDetailDTO> register(UserCreationDTO newUser);
     Mono<UserDetailDTO> updateUser(UUID id, UserCreationDTO dataToModify);
-    void deleteAcount(UUID id);
+    Mono<Void> deleteAcount(UUID id);
     Mono<UserDetailDTO> login(UserLoginDTO userToLogin);
     Mono<UserDetailDTO> updatePassword (UUID id, UserPasswordDTO passwordToUpdate);
     Flux<UserDetailDTO> findAll();
