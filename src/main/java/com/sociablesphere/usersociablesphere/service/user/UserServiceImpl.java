@@ -2,6 +2,7 @@ package com.sociablesphere.usersociablesphere.service.user;
 
 import com.sociablesphere.usersociablesphere.api.dto.*;
 import com.sociablesphere.usersociablesphere.exceptions.InvalidCredentialsException;
+import com.sociablesphere.usersociablesphere.exceptions.UserAlreadyExistsException;
 import com.sociablesphere.usersociablesphere.exceptions.UserNotFoundException;
 import com.sociablesphere.usersociablesphere.mapper.UserMapper;
 import com.sociablesphere.usersociablesphere.model.User;
@@ -22,8 +23,23 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Mono<UserDetailDTO> register(UserCreationDTO newUser) {
-        User user = UserMapper.toUser(newUser);
-        return userRepository.save(user).map(UserMapper::toUserDetailDTO);
+        return userRepository.findByEmail(newUser.getEmail())
+                .hasElement()
+                .flatMap(existsByEmail -> {
+                    if (existsByEmail) {
+                        return Mono.error(new UserAlreadyExistsException("Email is already in use."));
+                    }
+                    return userRepository.findByUserName(newUser.getUserName())
+                            .hasElement();
+                })
+                .flatMap(existsByUserName -> {
+                    if (existsByUserName) {
+                        return Mono.error(new UserAlreadyExistsException("Username is already taken."));
+                    }
+                    return userRepository.save(UserMapper.toUser(newUser))
+                            .map(UserMapper::toUserDetailDTO);
+                });
+
     }
 
     @Override

@@ -24,6 +24,7 @@ public class UserMapper {
                 .description(userCreationDTO.getDescription())
                 .password(PasswordUtil.hashPassword(userCreationDTO.getPassword()))
                 .role(userCreationDTO.getRole())
+                .wallet(0D)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
