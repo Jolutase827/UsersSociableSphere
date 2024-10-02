@@ -68,6 +68,11 @@ public class UserMapperTest {
         assertThat(mappedUser.getPhoto()).isEqualTo(userCreationDTO.getPhoto());
         assertThat(mappedUser.getDescription()).isEqualTo(userCreationDTO.getDescription());
         assertThat(mappedUser.getRole()).isEqualTo(userCreationDTO.getRole());
+
+        assertThat(mappedUser.getApiToken()).isNotNull();
+        assertThat(mappedUser.getApiToken()).isNotEmpty();
+        assertThat(mappedUser.getApiToken().length()).isLessThanOrEqualTo(255);
+
         assertThat(mappedUser.getWallet()).isEqualTo(0.0);
         assertThat(mappedUser.getCreatedAt()).isNotNull();
         assertThat(mappedUser.getUpdatedAt()).isNotNull();

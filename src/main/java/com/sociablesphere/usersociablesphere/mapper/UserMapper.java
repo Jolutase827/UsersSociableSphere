@@ -4,6 +4,7 @@ import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserDetailDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserResponseDTO;
 import com.sociablesphere.usersociablesphere.model.users;
+import com.sociablesphere.usersociablesphere.privacy.ApiTokenGenerator;
 import com.sociablesphere.usersociablesphere.privacy.PasswordUtil;
 import org.springframework.stereotype.Component;
 
@@ -24,17 +25,10 @@ public class UserMapper {
                 .password(PasswordUtil.hashPassword(userCreationDTO.getPassword()))
                 .role(userCreationDTO.getRole())
                 .wallet(0D)
-                .apiToken(generateRandomApiToken())  // Método para generar el token
+                .apiToken(ApiTokenGenerator.generateRandomApiToken())  // Método para generar el token
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
-    }
-
-    private static String generateRandomApiToken() {
-        long randomLong = Math.abs(new Random().nextLong());
-        String apiToken = Long.toString(randomLong);
-
-        return apiToken.length() <= 255 ? apiToken : apiToken.substring(0, 255);
     }
 
     public static UserResponseDTO toUserResponseDTO(users users) {
