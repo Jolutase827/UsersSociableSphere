@@ -1,0 +1,452 @@
+package com.sociablesphere.usersociablesphere.integration;
+
+import com.sociablesphere.usersociablesphere.api.dto.*;
+import com.sociablesphere.usersociablesphere.model.User;
+import com.sociablesphere.usersociablesphere.repository.UserRepository;
+import com.sociablesphere.usersociablesphere.privacy.PasswordUtil;
+
+import org.junit.jupiter.api.*;
+import static org.assertj.core.api.Assertions.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import org.springframework.test.web.reactive.server.WebTestClient;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.time.LocalDateTime;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class IntegrationTests {
+
+    @Autowired
+    private WebTestClient webTestClient;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    private static final String BASE_URL = "/v1/users";
+
+    @AfterEach
+    void tearDown() {
+        userRepository.deleteAll().block();
+    }
+
+    @Nested
+    @DisplayName("POST /v1/users/create")
+    class RegisterUserTests {
+
+        @Test
+        @DisplayName("1 llamada a POST /v1/users/create")
+        void testRegisterUser_1Call() {
+            int numberOfCalls = 1;
+            long totalTime = makeMultipleRegisterCalls(numberOfCalls);
+            System.out.println("Tiempo total para 1 llamada: " + totalTime + " ms");
+        }
+
+        @Test
+        @DisplayName("10 llamadas a POST /v1/users/create")
+        void testRegisterUser_10Calls() {
+            int numberOfCalls = 10;
+            long totalTime = makeMultipleRegisterCalls(numberOfCalls);
+            System.out.println("Tiempo total para 10 llamadas: " + totalTime + " ms");
+        }
+
+        @Test
+        @DisplayName("100 llamadas a POST /v1/users/create")
+        void testRegisterUser_100Calls() {
+            int numberOfCalls = 100;
+            long totalTime = makeMultipleRegisterCalls(numberOfCalls);
+            System.out.println("Tiempo total para 100 llamadas: " + totalTime + " ms");
+        }
+
+        private long makeMultipleRegisterCalls(int numberOfCalls) {
+            long startTime = System.currentTimeMillis();
+
+            for (int i = 0; i < numberOfCalls; i++) {
+                UserCreationDTO userCreationDTO = UserCreationDTO.builder()
+                        .userName("testuser" + i)
+                        .name("Test")
+                        .lastName("User")
+                        .email("testuser" + i + "@example.com")
+                        .password("Password123")
+                        .role("USER")
+                        .photo("photoUrl")
+                        .description("Test description")
+                        .build();
+
+                webTestClient.post()
+                        .uri(BASE_URL + "/create")
+                        .bodyValue(userCreationDTO)
+                        .exchange()
+                        .expectStatus().isOk()
+                        .expectBody(UserDetailDTO.class)
+                        .value(userDetail -> {
+                            assertThat(userDetail.getUserName()).isEqualTo(userCreationDTO.getUserName());
+                        });
+            }
+
+            long endTime = System.currentTimeMillis();
+            return endTime - startTime;
+        }
+    }
+
+    @Nested
+    @DisplayName("POST /v1/users/login")
+    class LoginUserTests {
+
+        @BeforeEach
+        void setupUsers() {
+            // Crear usuarios para las pruebas de login
+            Flux<User> users = Flux.range(0, 100)
+                    .map(i -> User.builder()
+                            .userName("testuser" + i)
+                            .name("Test")
+                            .lastName("User")
+                            .email("testuser" + i + "@example.com")
+                            .password(PasswordUtil.hashPassword("Password123"))
+                            .role("USER")
+                            .photo("photoUrl")
+                            .description("Test description")
+                            .createdAt(LocalDateTime.now())
+                            .updatedAt(LocalDateTime.now())
+                            .build()
+                    );
+            userRepository.saveAll(users).blockLast();
+        }
+
+        @Test
+        @DisplayName("1 llamada a POST /v1/users/login")
+        void testLoginUser_1Call() {
+            int numberOfCalls = 1;
+            long totalTime = makeMultipleLoginCalls(numberOfCalls);
+            System.out.println("Tiempo total para 1 llamada: " + totalTime + " ms");
+        }
+
+        @Test
+        @DisplayName("10 llamadas a POST /v1/users/login")
+        void testLoginUser_10Calls() {
+            int numberOfCalls = 10;
+            long totalTime = makeMultipleLoginCalls(numberOfCalls);
+            System.out.println("Tiempo total para 10 llamadas: " + totalTime + " ms");
+        }
+
+        @Test
+        @DisplayName("100 llamadas a POST /v1/users/login")
+        void testLoginUser_100Calls() {
+            int numberOfCalls = 100;
+            long totalTime = makeMultipleLoginCalls(numberOfCalls);
+            System.out.println("Tiempo total para 100 llamadas: " + totalTime + " ms");
+        }
+
+        private long makeMultipleLoginCalls(int numberOfCalls) {
+            long startTime = System.currentTimeMillis();
+
+            for (int i = 0; i < numberOfCalls; i++) {
+                UserLoginDTO userLoginDTO = UserLoginDTO.builder()
+                        .email("testuser" + i + "@example.com")
+                        .password("Password123")
+                        .build();
+
+                webTestClient.post()
+                        .uri(BASE_URL + "/login")
+                        .bodyValue(userLoginDTO)
+                        .exchange()
+                        .expectStatus().isOk()
+                        .expectBody(UserDetailDTO.class)
+                        .value(userDetail -> {
+                            assertThat(userDetail.getEmail()).isEqualTo(userLoginDTO.getEmail());
+                        });
+            }
+
+            long endTime = System.currentTimeMillis();
+            return endTime - startTime;
+        }
+    }
+
+    @Nested
+    @DisplayName("GET /v1/users")
+    class GetAllUsersTests {
+
+        @BeforeEach
+        void setupUsers() {
+            // Crear usuarios para las pruebas de obtención
+            Flux<User> users = Flux.range(0, 10) // Puedes ajustar el número de usuarios
+                    .map(i -> User.builder()
+                            .userName("testuser" + i)
+                            .name("Test")
+                            .lastName("User")
+                            .email("testuser" + i + "@example.com")
+                            .password(PasswordUtil.hashPassword("Password123"))
+                            .role("USER")
+                            .photo("photoUrl")
+                            .description("Test description")
+                            .createdAt(LocalDateTime.now())
+                            .updatedAt(LocalDateTime.now())
+                            .build()
+                    );
+            userRepository.saveAll(users).blockLast();
+        }
+
+        @Test
+        @DisplayName("1 llamada a GET /v1/users")
+        void testGetAllUsers_1Call() {
+            int numberOfCalls = 1;
+            long totalTime = makeMultipleCalls(numberOfCalls);
+            System.out.println("Tiempo total para 1 llamada: " + totalTime + " ms");
+        }
+
+        @Test
+        @DisplayName("10 llamadas a GET /v1/users")
+        void testGetAllUsers_10Calls() {
+            int numberOfCalls = 10;
+            long totalTime = makeMultipleCalls(numberOfCalls);
+            System.out.println("Tiempo total para 10 llamadas: " + totalTime + " ms");
+        }
+
+        @Test
+        @DisplayName("100 llamadas a GET /v1/users")
+        void testGetAllUsers_100Calls() {
+            int numberOfCalls = 100;
+            long totalTime = makeMultipleCalls(numberOfCalls);
+            System.out.println("Tiempo total para 100 llamadas: " + totalTime + " ms");
+        }
+
+        private long makeMultipleCalls(int numberOfCalls) {
+            long startTime = System.currentTimeMillis();
+
+            for (int i = 0; i < numberOfCalls; i++) {
+                webTestClient.get()
+                        .uri(BASE_URL)
+                        .exchange()
+                        .expectStatus().isOk()
+                        .expectBodyList(UserDetailDTO.class)
+                        .value(userList -> {
+                            assertThat(userList).isNotEmpty();
+                        });
+            }
+
+            long endTime = System.currentTimeMillis();
+            return endTime - startTime;
+        }
+    }
+
+    @Nested
+    @DisplayName("PUT /v1/users/{id}/password")
+    class UpdatePasswordTests {
+
+        private User user;
+
+        @BeforeEach
+        void setupUser() {
+            user = User.builder()
+                    .userName("testuser")
+                    .name("Test")
+                    .lastName("User")
+                    .email("testuser@example.com")
+                    .password(PasswordUtil.hashPassword("OldPassword123"))
+                    .role("USER")
+                    .photo("photoUrl")
+                    .description("Test description")
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
+                    .build();
+            user = userRepository.save(user).block();
+        }
+
+        @Test
+        @DisplayName("1 llamada a PUT /v1/users/{id}/password")
+        void testUpdatePassword_1Call() {
+            int numberOfCalls = 1;
+            long totalTime = makeMultipleUpdatePasswordCalls(numberOfCalls);
+            System.out.println("Tiempo total para 1 llamada: " + totalTime + " ms");
+        }
+
+        @Test
+        @DisplayName("10 llamadas a PUT /v1/users/{id}/password")
+        void testUpdatePassword_10Calls() {
+            int numberOfCalls = 10;
+            long totalTime = makeMultipleUpdatePasswordCalls(numberOfCalls);
+            System.out.println("Tiempo total para 10 llamadas: " + totalTime + " ms");
+        }
+
+        @Test
+        @DisplayName("100 llamadas a PUT /v1/users/{id}/password")
+        void testUpdatePassword_100Calls() {
+            int numberOfCalls = 100;
+            long totalTime = makeMultipleUpdatePasswordCalls(numberOfCalls);
+            System.out.println("Tiempo total para 100 llamadas: " + totalTime + " ms");
+        }
+
+        private long makeMultipleUpdatePasswordCalls(int numberOfCalls) {
+            long startTime = System.currentTimeMillis();
+
+            for (int i = 0; i < numberOfCalls; i++) {
+                user.setPassword(PasswordUtil.hashPassword("OldPassword123"));
+                userRepository.save(user).block();
+
+                UserPasswordDTO userPasswordDTO = UserPasswordDTO.builder()
+                        .oldPassword("OldPassword123")
+                        .newPassword("NewPassword123")
+                        .build();
+
+                webTestClient.put()
+                        .uri(BASE_URL + "/" + user.getId() + "/password")
+                        .bodyValue(userPasswordDTO)
+                        .exchange()
+                        .expectStatus().isOk()
+                        .expectBody(UserDetailDTO.class)
+                        .value(userDetail -> {
+                            assertThat(userDetail.getEmail()).isEqualTo(user.getEmail());
+                        });
+            }
+
+            long endTime = System.currentTimeMillis();
+            return endTime - startTime;
+        }
+    }
+
+    @Nested
+    @DisplayName("PUT /v1/users/{id}")
+    class UpdateUserTests {
+
+        private User user;
+
+        @BeforeEach
+        void setupUser() {
+            user = User.builder()
+                    .userName("testuser")
+                    .name("Test")
+                    .lastName("User")
+                    .email("testuser@example.com")
+                    .password(PasswordUtil.hashPassword("Password123"))
+                    .role("USER")
+                    .photo("photoUrl")
+                    .description("Test description")
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
+                    .build();
+            userRepository.save(user).block();
+        }
+
+        @Test
+        @DisplayName("1 llamada a PUT /v1/users/{id}")
+        void testUpdateUser_1Call() {
+            int numberOfCalls = 1;
+            long totalTime = makeMultipleUpdateUserCalls(numberOfCalls);
+            System.out.println("Tiempo total para 1 llamada: " + totalTime + " ms");
+        }
+
+        @Test
+        @DisplayName("10 llamadas a PUT /v1/users/{id}")
+        void testUpdateUser_10Calls() {
+            int numberOfCalls = 10;
+            long totalTime = makeMultipleUpdateUserCalls(numberOfCalls);
+            System.out.println("Tiempo total para 10 llamadas: " + totalTime + " ms");
+        }
+
+        @Test
+        @DisplayName("100 llamadas a PUT /v1/users/{id}")
+        void testUpdateUser_100Calls() {
+            int numberOfCalls = 100;
+            long totalTime = makeMultipleUpdateUserCalls(numberOfCalls);
+            System.out.println("Tiempo total para 100 llamadas: " + totalTime + " ms");
+        }
+
+        private long makeMultipleUpdateUserCalls(int numberOfCalls) {
+            long startTime = System.currentTimeMillis();
+
+            for (int i = 0; i < numberOfCalls; i++) {
+                UserCreationDTO updateDTO = UserCreationDTO.builder()
+                        .userName("updateduser" + i)
+                        .name("Updated")
+                        .lastName("User")
+                        .email("updateduser" + i + "@example.com")
+                        .password("Password123")
+                        .role("USER")
+                        .photo("photoUrl")
+                        .description("Updated description")
+                        .build();
+
+                webTestClient.put()
+                        .uri(BASE_URL + "/" + user.getId())
+                        .bodyValue(updateDTO)
+                        .exchange()
+                        .expectStatus().isOk()
+                        .expectBody(UserDetailDTO.class)
+                        .value(userDetail -> {
+                            assertThat(userDetail.getUserName()).isEqualTo(updateDTO.getUserName());
+                        });
+            }
+
+            long endTime = System.currentTimeMillis();
+            return endTime - startTime;
+        }
+    }
+
+    @Nested
+    @DisplayName("DELETE /v1/users/{id}")
+    class DeleteUserTests {
+
+        @BeforeEach
+        void setupUsers() {
+            Flux<User> users = Flux.range(0, 100)
+                    .map(i -> User.builder()
+                            .userName("testuser" + i)
+                            .name("Test")
+                            .lastName("User")
+                            .email("testuser" + i + "@example.com")
+                            .password("Password123")
+                            .role("USER")
+                            .photo("photoUrl")
+                            .description("Test description")
+                            .createdAt(LocalDateTime.now())
+                            .updatedAt(LocalDateTime.now())
+                            .build()
+                    );
+            userRepository.saveAll(users).blockLast();
+        }
+
+        @Test
+        @DisplayName("1 llamada a DELETE /v1/users/{id}")
+        void testDeleteUser_1Call() {
+            int numberOfCalls = 1;
+            long totalTime = makeMultipleDeleteUserCalls(numberOfCalls);
+            System.out.println("Tiempo total para 1 llamada: " + totalTime + " ms");
+        }
+
+        @Test
+        @DisplayName("10 llamadas a DELETE /v1/users/{id}")
+        void testDeleteUser_10Calls() {
+            int numberOfCalls = 10;
+            long totalTime = makeMultipleDeleteUserCalls(numberOfCalls);
+            System.out.println("Tiempo total para 10 llamadas: " + totalTime + " ms");
+        }
+
+        @Test
+        @DisplayName("100 llamadas a DELETE /v1/users/{id}")
+        void testDeleteUser_100Calls() {
+            int numberOfCalls = 100;
+            long totalTime = makeMultipleDeleteUserCalls(numberOfCalls);
+            System.out.println("Tiempo total para 100 llamadas: " + totalTime + " ms");
+        }
+
+        private long makeMultipleDeleteUserCalls(int numberOfCalls) {
+            long startTime = System.currentTimeMillis();
+
+            for (int i = 0; i < numberOfCalls; i++) {
+                Long userId = (long) i;
+
+                webTestClient.delete()
+                        .uri(BASE_URL + "/" + userId)
+                        .exchange()
+                        .expectStatus().isNoContent();
+            }
+
+            long endTime = System.currentTimeMillis();
+            return endTime - startTime;
+        }
+    }
+}

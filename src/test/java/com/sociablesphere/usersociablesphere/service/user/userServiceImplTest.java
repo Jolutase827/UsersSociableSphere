@@ -6,7 +6,7 @@ import com.sociablesphere.usersociablesphere.exceptions.InvalidCredentialsExcept
 import com.sociablesphere.usersociablesphere.exceptions.UserAlreadyExistsException;
 import com.sociablesphere.usersociablesphere.exceptions.UserNotFoundException;
 import com.sociablesphere.usersociablesphere.mapper.UserMapper;
-import com.sociablesphere.usersociablesphere.model.users;
+import com.sociablesphere.usersociablesphere.model.User;
 import com.sociablesphere.usersociablesphere.repository.UserRepository;
 import static com.sociablesphere.usersociablesphere.service.Data.DataUserServiceImplTest.*;
 
@@ -30,7 +30,7 @@ import java.util.Random;
 
 
 @ExtendWith(MockitoExtension.class)
-class usersServiceImplTest {
+class userServiceImplTest {
 
 
     @Mock
@@ -46,7 +46,7 @@ class usersServiceImplTest {
         @DisplayName("Given a valid user,Then sing up and return user details")
         void registerValidUser() {
             //Given
-            users userEntity = UserMapper.toUser(USER_RETURN);
+            User userEntity = UserMapper.toUser(USER_RETURN);
             when(userRepository.save(any())).thenReturn(Mono.just(userEntity));
             when(userRepository.findByEmail(any())).thenReturn(Mono.empty());
             when(userRepository.findByUserName(USER_RETURN.getUserName())).thenReturn(Mono.empty());
@@ -73,7 +73,7 @@ class usersServiceImplTest {
         @DisplayName("Given a user with userName that already exists," +
                     " Then throw an UserAlreadyExistsException with username message")
         void registerErrorSameName() {
-            users userEntity = UserMapper.toUser(USER_RETURN);
+            User userEntity = UserMapper.toUser(USER_RETURN);
             when(userRepository.findByEmail(any())).thenReturn(Mono.empty());
             when(userRepository.findByUserName(USER_RETURN.getUserName())).thenReturn(Mono.just(userEntity));
 
@@ -97,7 +97,7 @@ class usersServiceImplTest {
                 " Then throw an UserAlreadyExistsException with email message")
         void registerErrorSameEmail() {
             //Given
-            users userEntity = UserMapper.toUser(USER_RETURN);
+            User userEntity = UserMapper.toUser(USER_RETURN);
             when(userRepository.findByEmail(any())).thenReturn(Mono.just(userEntity));
 
 
@@ -124,7 +124,7 @@ class usersServiceImplTest {
         @DisplayName("Given valid user ID and correct old password, Then update the password")
         void updatePasswordValid() {
             // Given
-            users userEntity = UserMapper.toUser(USER_RETURN);
+            User userEntity = UserMapper.toUser(USER_RETURN);
             when(userRepository.findById(anyLong())).thenReturn(Mono.just(userEntity));
             when(userRepository.save(any())).thenReturn(Mono.just(userEntity));
 
@@ -149,7 +149,7 @@ class usersServiceImplTest {
         @DisplayName("Given valid user ID and incorrect old password, Then throw InvalidCredentialsException")
         void updatePasswordInValid() {
             // Given
-            users userEntity = UserMapper.toUser(USER_RETURN);
+            User userEntity = UserMapper.toUser(USER_RETURN);
             when(userRepository.findById(anyLong())).thenReturn(Mono.just(userEntity));
 
             // When
@@ -190,7 +190,7 @@ class usersServiceImplTest {
         @DisplayName("Find all users and return their details")
         void findAllUsers() {
             // Given
-            users userEntity = UserMapper.toUser(USER_RETURN);
+            User userEntity = UserMapper.toUser(USER_RETURN);
             when(userRepository.findAll()).thenReturn(Flux.just(userEntity));
 
             // When
@@ -218,7 +218,7 @@ class usersServiceImplTest {
         @DisplayName("Given valid email and password, Then return user details")
         void loginUserValid() {
             // Given
-            users userEntity = UserMapper.toUser(USER_RETURN);
+            User userEntity = UserMapper.toUser(USER_RETURN);
             when(userRepository.findByEmail(any())).thenReturn(Mono.just(userEntity));
             when(userRepository.findByUserName(any())).thenReturn(Mono.just(userEntity));
 
@@ -271,7 +271,7 @@ class usersServiceImplTest {
         @DisplayName("Given valid user ID and correct password, Then update the user details")
         void updateUserValid() {
             // Given
-            users userEntity = UserMapper.toUser(USER_RETURN);
+            User userEntity = UserMapper.toUser(USER_RETURN);
             when(userRepository.findById(USER_ID)).thenReturn(Mono.just(userEntity));
             when(userRepository.save(any())).thenReturn(Mono.just(userEntity));
 
@@ -315,7 +315,7 @@ class usersServiceImplTest {
         @DisplayName("Given valid user ID but incorrect current password, Then do not update and return error")
         void updateUserInvalidPassword() {
             // Given
-            users userEntity = UserMapper.toUser(USER_RETURN);
+            User userEntity = UserMapper.toUser(USER_RETURN);
 
 
             when(userRepository.findById(USER_ID)).thenReturn(Mono.just(userEntity));

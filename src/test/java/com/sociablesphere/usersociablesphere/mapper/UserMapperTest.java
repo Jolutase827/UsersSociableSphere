@@ -3,7 +3,7 @@ package com.sociablesphere.usersociablesphere.mapper;
 import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserDetailDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserResponseDTO;
-import com.sociablesphere.usersociablesphere.model.users;
+import com.sociablesphere.usersociablesphere.model.User;
 import com.sociablesphere.usersociablesphere.privacy.PasswordUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UserMapperTest {
 
     private UserCreationDTO userCreationDTO;
-    private users user;
+    private User user;
     private String hashedPassword;
 
     @BeforeEach
@@ -36,7 +36,7 @@ public class UserMapperTest {
 
         hashedPassword = PasswordUtil.hashPassword(userCreationDTO.getPassword());
 
-        user = users.builder()
+        user = User.builder()
                 .id(Math.abs(new Random().nextLong()))
                 .userName("jane_doe")
                 .name("Jane")
@@ -57,7 +57,7 @@ public class UserMapperTest {
     @DisplayName("Test mapping from UserCreationDTO to User")
     public void testToUser() {
         // Act
-        users mappedUser = UserMapper.toUser(userCreationDTO);
+        User mappedUser = UserMapper.toUser(userCreationDTO);
 
         // Assert
         assertThat(mappedUser).isNotNull();

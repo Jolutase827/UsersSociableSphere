@@ -1,11 +1,15 @@
 spring:
   application:
     name: UserSociableSphere
+  r2dbc:
+    url: r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
   data:
     r2dbc:
       repositories:
         enabled: true
-  r2dbc:
-    url: r2dbc:postgresql://socialsphere_root:socialsphere@postgresql-socialsphere.alwaysdata.net:5432/socialsphere_users
-    username: socialsphere_root
-    password: socialsphere
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql

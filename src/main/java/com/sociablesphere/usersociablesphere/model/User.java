@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Table("users")
-public class users {
+public class User {
 
     @Id
     private Long id;

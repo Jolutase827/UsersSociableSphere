@@ -3,7 +3,7 @@ package com.sociablesphere.usersociablesphere.mapper;
 import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserDetailDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserResponseDTO;
-import com.sociablesphere.usersociablesphere.model.users;
+import com.sociablesphere.usersociablesphere.model.User;
 import com.sociablesphere.usersociablesphere.privacy.ApiTokenGenerator;
 import com.sociablesphere.usersociablesphere.privacy.PasswordUtil;
 import org.springframework.stereotype.Component;
@@ -14,8 +14,8 @@ import java.util.Random;
 @Component
 public class UserMapper {
 
-    public static users toUser(UserCreationDTO userCreationDTO) {
-        return users.builder()
+    public static User toUser(UserCreationDTO userCreationDTO) {
+        return User.builder()
                 .userName(userCreationDTO.getUserName())
                 .name(userCreationDTO.getName())
                 .lastName(userCreationDTO.getLastName())
@@ -31,7 +31,7 @@ public class UserMapper {
                 .build();
     }
 
-    public static UserResponseDTO toUserResponseDTO(users users) {
+    public static UserResponseDTO toUserResponseDTO(User users) {
         return UserResponseDTO.builder()
                 .id(users.getId())
                 .userName(users.getUserName())
@@ -44,7 +44,7 @@ public class UserMapper {
                 .build();
     }
 
-    public static UserDetailDTO toUserDetailDTO(users users) {
+    public static UserDetailDTO toUserDetailDTO(User users) {
         return UserDetailDTO.builder()
                 .id(users.getId())
                 .userName(users.getUserName())

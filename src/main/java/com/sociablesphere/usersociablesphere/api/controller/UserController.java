@@ -31,19 +31,19 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Mono<UserDetailDTO>> loginUser (@RequestBody UserLoginDTO userLoginDTO){
+    public ResponseEntity<Mono<UserDetailDTO>> loginUser (@Valid @RequestBody UserLoginDTO userLoginDTO){
         Mono<UserDetailDTO> user = userService.login(userLoginDTO);
         return ResponseEntity.ok(user);
     }
 
-    @PatchMapping("/{id}/password")
-    public ResponseEntity<Mono<UserDetailDTO>> patchPassword (@PathVariable Long id, @RequestBody UserPasswordDTO userPassword){
+    @PutMapping("/{id}/password")
+    public ResponseEntity<Mono<UserDetailDTO>> patchPassword (@PathVariable Long id, @Valid @RequestBody UserPasswordDTO userPassword){
         Mono<UserDetailDTO> user = userService.updatePassword(id, userPassword);
         return ResponseEntity.ok(user);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Mono<UserDetailDTO>> updateUser (@PathVariable Long id, @RequestBody UserCreationDTO dataToUpdate){
+    public ResponseEntity<Mono<UserDetailDTO>> updateUser (@PathVariable Long id, @Valid @RequestBody UserCreationDTO dataToUpdate){
         Mono<UserDetailDTO> user = userService.updateUser(id,dataToUpdate);
         return ResponseEntity.ok(user);
     }
