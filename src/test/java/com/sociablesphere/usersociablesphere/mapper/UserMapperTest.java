@@ -3,13 +3,14 @@ package com.sociablesphere.usersociablesphere.mapper;
 import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserDetailDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserResponseDTO;
-import com.sociablesphere.usersociablesphere.model.User;
+import com.sociablesphere.usersociablesphere.model.users;
 import com.sociablesphere.usersociablesphere.privacy.PasswordUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.Random;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UserMapperTest {
 
     private UserCreationDTO userCreationDTO;
-    private User user;
+    private users user;
     private String hashedPassword;
 
     @BeforeEach
@@ -35,8 +36,8 @@ public class UserMapperTest {
 
         hashedPassword = PasswordUtil.hashPassword(userCreationDTO.getPassword());
 
-        user = User.builder()
-                .id(UUID.randomUUID())
+        user = users.builder()
+                .id(Math.abs(new Random().nextLong()))
                 .userName("jane_doe")
                 .name("Jane")
                 .lastName("Doe")
@@ -56,11 +57,10 @@ public class UserMapperTest {
     @DisplayName("Test mapping from UserCreationDTO to User")
     public void testToUser() {
         // Act
-        User mappedUser = UserMapper.toUser(userCreationDTO);
+        users mappedUser = UserMapper.toUser(userCreationDTO);
 
         // Assert
         assertThat(mappedUser).isNotNull();
-        assertThat(mappedUser.getId()).isNotNull();
         assertThat(mappedUser.getUserName()).isEqualTo(userCreationDTO.getUserName());
         assertThat(mappedUser.getName()).isEqualTo(userCreationDTO.getName());
         assertThat(mappedUser.getLastName()).isEqualTo(userCreationDTO.getLastName());

@@ -16,7 +16,6 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.lang.Long;
-import java.util.Long;
 import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,7 +39,7 @@ public class UserControllerTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        Long userId = Long.randomLong();
+        Long userId = anyLong();
 
         userDetailDTO = UserDetailDTO.builder()
                 .id(userId)
