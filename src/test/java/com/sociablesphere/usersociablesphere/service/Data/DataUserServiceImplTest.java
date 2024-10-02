@@ -10,7 +10,7 @@ import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
 
 public class DataUserServiceImplTest {
 
-    public final static Long USER_ID = java.lang.Long.valueOf(java.lang.Long.toString(Math.abs(new Random().nextLong())));
+    public final static Long USER_ID = new Random().nextLong();
 
     public final static UserCreationDTO USER_RETURN = UserCreationDTO.builder()
             .userName("JoseLuis")

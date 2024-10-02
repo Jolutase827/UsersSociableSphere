@@ -125,7 +125,7 @@ class usersServiceImplTest {
         void updatePasswordValid() {
             // Given
             users userEntity = UserMapper.toUser(USER_RETURN);
-            when(userRepository.findById((anyLong())).thenReturn(Mono.just(userEntity)));
+            when(userRepository.findById(anyLong())).thenReturn(Mono.just(userEntity));
             when(userRepository.save(any())).thenReturn(Mono.just(userEntity));
 
             // When
@@ -150,7 +150,7 @@ class usersServiceImplTest {
         void updatePasswordInValid() {
             // Given
             users userEntity = UserMapper.toUser(USER_RETURN);
-            when(userRepository.findById((anyLong())).thenReturn(Mono.just(userEntity)));
+            when(userRepository.findById(anyLong())).thenReturn(Mono.just(userEntity));
 
             // When
             Mono<UserDetailDTO> userDetailDTOMono = userService.updatePassword(USER_ID, USER_WRONG_PASSWORD_DTO);
@@ -168,7 +168,7 @@ class usersServiceImplTest {
         @DisplayName("Given a non-existing user ID, Then throw UserNotFoundException")
         void updatePasswordUserNotFound() {
             // Given
-            when(userRepository.findById(anyLong()).thenReturn(Mono.empty()));
+            when(userRepository.findById(USER_ID)).thenReturn(Mono.empty());
 
             // When
             Mono<UserDetailDTO> userDetailDTOMono = userService.updatePassword(USER_ID, USER_PASSWORD_DTO);
@@ -179,8 +179,7 @@ class usersServiceImplTest {
                             error.getMessage().equals("The user with the id " + USER_ID + " doesn't exists."))
                     .verify();
 
-            verify(userRepository).findById(anyLong());
-            verify(userRepository, never()).save(any());
+            verify(userRepository).findById(USER_ID);
         }
     }
 

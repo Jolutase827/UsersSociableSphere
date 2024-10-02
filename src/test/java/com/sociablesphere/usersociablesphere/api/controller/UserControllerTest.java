@@ -39,7 +39,7 @@ public class UserControllerTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        Long userId = anyLong();
+        Long userId = new Random().nextLong();
 
         userDetailDTO = UserDetailDTO.builder()
                 .id(userId)
