@@ -15,10 +15,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import java.lang.Long;
 import java.util.Random;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
@@ -77,12 +76,10 @@ public class UserControllerTest {
         when(userService.findAll()).thenReturn(Flux.just(userDetailDTO));
 
         // Act
-        ResponseEntity<Flux<UserDetailDTO>> response = userController.getAllUsers();
+        Flux<UserDetailDTO> response = userController.getAllUsers();
 
         // Assert
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
-
-        StepVerifier.create(response.getBody())
+        StepVerifier.create(response)
                 .expectNext(userDetailDTO)
                 .verifyComplete();
 
@@ -96,13 +93,14 @@ public class UserControllerTest {
         when(userService.register(any(UserCreationDTO.class))).thenReturn(Mono.just(userDetailDTO));
 
         // Act
-        ResponseEntity<Mono<UserDetailDTO>> response = userController.registerUser(userCreationDTO);
+        Mono<ResponseEntity<UserDetailDTO>> response = userController.registerUser(userCreationDTO);
 
         // Assert
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
-
-        StepVerifier.create(response.getBody())
-                .expectNext(userDetailDTO)
+        StepVerifier.create(response)
+                .assertNext(result -> {
+                    assertThat(result.getStatusCodeValue()).isEqualTo(200);
+                    assertThat(result.getBody()).isEqualTo(userDetailDTO);
+                })
                 .verifyComplete();
 
         verify(userService, times(1)).register(userCreationDTO);
@@ -115,13 +113,14 @@ public class UserControllerTest {
         when(userService.login(any(UserLoginDTO.class))).thenReturn(Mono.just(userDetailDTO));
 
         // Act
-        ResponseEntity<Mono<UserDetailDTO>> response = userController.loginUser(userLoginDTO);
+        Mono<ResponseEntity<UserDetailDTO>> response = userController.loginUser(userLoginDTO);
 
         // Assert
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
-
-        StepVerifier.create(response.getBody())
-                .expectNext(userDetailDTO)
+        StepVerifier.create(response)
+                .assertNext(result -> {
+                    assertThat(result.getStatusCodeValue()).isEqualTo(200);
+                    assertThat(result.getBody()).isEqualTo(userDetailDTO);
+                })
                 .verifyComplete();
 
         verify(userService, times(1)).login(userLoginDTO);
@@ -135,13 +134,14 @@ public class UserControllerTest {
         when(userService.updatePassword(eq(userId), any(UserPasswordDTO.class))).thenReturn(Mono.just(userDetailDTO));
 
         // Act
-        ResponseEntity<Mono<UserDetailDTO>> response = userController.patchPassword(userId, userPasswordDTO);
+        Mono<ResponseEntity<UserDetailDTO>> response = userController.patchPassword(userId, userPasswordDTO);
 
         // Assert
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
-
-        StepVerifier.create(response.getBody())
-                .expectNext(userDetailDTO)
+        StepVerifier.create(response)
+                .assertNext(result -> {
+                    assertThat(result.getStatusCodeValue()).isEqualTo(200);
+                    assertThat(result.getBody()).isEqualTo(userDetailDTO);
+                })
                 .verifyComplete();
 
         verify(userService, times(1)).updatePassword(userId, userPasswordDTO);
@@ -155,13 +155,14 @@ public class UserControllerTest {
         when(userService.updateUser(eq(userId), any(UserCreationDTO.class))).thenReturn(Mono.just(userDetailDTO));
 
         // Act
-        ResponseEntity<Mono<UserDetailDTO>> response = userController.updateUser(userId, userCreationDTO);
+        Mono<ResponseEntity<UserDetailDTO>> response = userController.updateUser(userId, userCreationDTO);
 
         // Assert
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
-
-        StepVerifier.create(response.getBody())
-                .expectNext(userDetailDTO)
+        StepVerifier.create(response)
+                .assertNext(result -> {
+                    assertThat(result.getStatusCodeValue()).isEqualTo(200);
+                    assertThat(result.getBody()).isEqualTo(userDetailDTO);
+                })
                 .verifyComplete();
 
         verify(userService, times(1)).updateUser(userId, userCreationDTO);
@@ -175,10 +176,13 @@ public class UserControllerTest {
         when(userService.deleteAcount(id)).thenReturn(Mono.empty());
 
         // Act
-        ResponseEntity<Void> response = userController.deleteUser(id);
+        Mono<ResponseEntity<Void>> response = userController.deleteUser(id);
 
         // Assert
-        assertThat(response.getStatusCodeValue()).isEqualTo(204);
+        StepVerifier.create(response)
+                .assertNext(result -> assertThat(result.getStatusCodeValue()).isEqualTo(204))
+                .verifyComplete();
+
         verify(userService, times(1)).deleteAcount(id);
     }
 }

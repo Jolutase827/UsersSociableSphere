@@ -19,38 +19,38 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<Flux<UserDetailDTO>> getAllUsers() {
+    public Flux<UserDetailDTO> getAllUsers() {
         Flux<UserDetailDTO> users = userService.findAll();
-        return ResponseEntity.ok(users);
+        return users;
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Mono<UserDetailDTO>> registerUser (@Valid @RequestBody UserCreationDTO userCreationDTO){
+    public Mono<ResponseEntity<UserDetailDTO>> registerUser (@Valid @RequestBody UserCreationDTO userCreationDTO){
         Mono<UserDetailDTO> user = userService.register(userCreationDTO);
-        return ResponseEntity.ok(user);
+        return user.map(ResponseEntity::ok);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Mono<UserDetailDTO>> loginUser (@Valid @RequestBody UserLoginDTO userLoginDTO){
+    public Mono<ResponseEntity<UserDetailDTO>> loginUser (@Valid @RequestBody UserLoginDTO userLoginDTO){
         Mono<UserDetailDTO> user = userService.login(userLoginDTO);
-        return ResponseEntity.ok(user);
+        return user.map(ResponseEntity::ok);
     }
 
     @PutMapping("/{id}/password")
-    public ResponseEntity<Mono<UserDetailDTO>> patchPassword (@PathVariable Long id, @Valid @RequestBody UserPasswordDTO userPassword){
+    public Mono<ResponseEntity<UserDetailDTO>> patchPassword (@PathVariable Long id, @Valid @RequestBody UserPasswordDTO userPassword){
         Mono<UserDetailDTO> user = userService.updatePassword(id, userPassword);
-        return ResponseEntity.ok(user);
+        return user.map(ResponseEntity::ok);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Mono<UserDetailDTO>> updateUser (@PathVariable Long id, @Valid @RequestBody UserCreationDTO dataToUpdate){
+    public Mono<ResponseEntity<UserDetailDTO>> updateUser (@PathVariable Long id, @Valid @RequestBody UserCreationDTO dataToUpdate){
         Mono<UserDetailDTO> user = userService.updateUser(id,dataToUpdate);
-        return ResponseEntity.ok(user);
+        return user.map(ResponseEntity::ok);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public Mono<ResponseEntity<Void>> deleteUser(@PathVariable Long id) {
         userService.deleteAcount(id);
-        return ResponseEntity.noContent().build();
+        return Mono.just(ResponseEntity.noContent().build());
     }
 }
