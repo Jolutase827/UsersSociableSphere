@@ -81,7 +81,7 @@ public class IntegrationTests {
                         .uri(BASE_URL + "/create")
                         .bodyValue(userCreationDTO)
                         .exchange()
-                        .expectStatus().isOk()
+                        .expectStatus().isCreated()
                         .expectBody(UserDetailDTO.class)
                         .value(userDetail -> {
                             assertThat(userDetail.getUserName()).isEqualTo(userCreationDTO.getUserName());

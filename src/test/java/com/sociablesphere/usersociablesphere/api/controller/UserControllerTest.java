@@ -98,7 +98,7 @@ public class UserControllerTest {
         // Assert
         StepVerifier.create(response)
                 .assertNext(result -> {
-                    assertThat(result.getStatusCodeValue()).isEqualTo(200);
+                    assertThat(result.getStatusCodeValue()).isEqualTo(201);
                     assertThat(result.getBody()).isEqualTo(userDetailDTO);
                 })
                 .verifyComplete();

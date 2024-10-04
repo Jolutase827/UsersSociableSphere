@@ -3,6 +3,7 @@ package com.sociablesphere.usersociablesphere.api.controller;
 import com.sociablesphere.usersociablesphere.api.dto.*;
 import com.sociablesphere.usersociablesphere.service.user.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -20,37 +21,38 @@ public class UserController {
 
     @GetMapping
     public Flux<UserDetailDTO> getAllUsers() {
-        Flux<UserDetailDTO> users = userService.findAll();
-        return users;
+        return userService.findAll();
     }
 
     @PostMapping("/create")
-    public Mono<ResponseEntity<UserDetailDTO>> registerUser (@Valid @RequestBody UserCreationDTO userCreationDTO){
-        Mono<UserDetailDTO> user = userService.register(userCreationDTO);
-        return user.map(ResponseEntity::ok);
+    public Mono<ResponseEntity<UserDetailDTO>> registerUser(@Valid @RequestBody UserCreationDTO userCreationDTO) {
+        return userService.register(userCreationDTO)
+                .map(user -> ResponseEntity.status(HttpStatus.CREATED).body(user));
     }
+
 
     @PostMapping("/login")
     public Mono<ResponseEntity<UserDetailDTO>> loginUser (@Valid @RequestBody UserLoginDTO userLoginDTO){
-        Mono<UserDetailDTO> user = userService.login(userLoginDTO);
-        return user.map(ResponseEntity::ok);
+        return userService.login(userLoginDTO)
+                .map(ResponseEntity::ok);
     }
 
     @PutMapping("/{id}/password")
     public Mono<ResponseEntity<UserDetailDTO>> patchPassword (@PathVariable Long id, @Valid @RequestBody UserPasswordDTO userPassword){
-        Mono<UserDetailDTO> user = userService.updatePassword(id, userPassword);
-        return user.map(ResponseEntity::ok);
+        return userService.updatePassword(id, userPassword)
+                .map(ResponseEntity::ok);
     }
 
     @PutMapping("/{id}")
     public Mono<ResponseEntity<UserDetailDTO>> updateUser (@PathVariable Long id, @Valid @RequestBody UserCreationDTO dataToUpdate){
-        Mono<UserDetailDTO> user = userService.updateUser(id,dataToUpdate);
-        return user.map(ResponseEntity::ok);
+        return  userService.updateUser(id,dataToUpdate)
+                .map(ResponseEntity::ok);
     }
 
     @DeleteMapping("/{id}")
     public Mono<ResponseEntity<Void>> deleteUser(@PathVariable Long id) {
-        userService.deleteAcount(id);
-        return Mono.just(ResponseEntity.noContent().build());
+        return userService.deleteAcount(id)
+                .then(Mono.just(ResponseEntity.noContent().build()));
     }
+
 }
