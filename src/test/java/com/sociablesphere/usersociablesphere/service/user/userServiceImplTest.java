@@ -175,7 +175,7 @@ class userServiceImplTest {
             // Then
             StepVerifier.create(userDetailDTOMono)
                     .expectErrorMatches(error -> error instanceof UserNotFoundException &&
-                            error.getMessage().equals("The user with the id " + USER_ID + " doesn't exists."))
+                            error.getMessage().equals("The user with the id " + USER_ID + " doesn't exist."))
                     .verify();
 
             verify(userRepository).findById(USER_ID);
@@ -302,7 +302,7 @@ class userServiceImplTest {
             // Then
             StepVerifier.create(userService.updateUser(USER_ID, USER_RETURN))
                     .expectErrorMatches(error -> error instanceof UserNotFoundException &&
-                            error.getMessage().equals("The user with the id " + USER_ID + " doesn't exists."))
+                            error.getMessage().equals("The user with the id " + USER_ID + " doesn't exist."))
                     .verify();
 
             verify(userRepository).findById(USER_ID);

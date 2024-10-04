@@ -51,10 +51,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Mono<UserDetailDTO> updateUser(Long id, UserCreationDTO dataToModify) {
         logger.info("Updating user with ID: {}", id);
-        Mono<Usuarios> userMono = userRepository.findById(id)
-                .switchIfEmpty(Mono.error(new UserNotFoundException("The user with the id " + id + " doesn't exist.")));
+        Mono<Usuarios> userMono = userRepository.findById(id);
 
         return userMono
+                .switchIfEmpty(Mono.error(new UserNotFoundException("The user with the id " + id + " doesn't exist.")))
                 .filter(user -> PasswordUtil.checkPassword(dataToModify.getPassword(), user.getPassword()))
                 .flatMap(user -> {
                     user.updateData(dataToModify);
@@ -92,10 +92,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Mono<UserDetailDTO> updatePassword(Long id, UserPasswordDTO passwordToUpdate) {
         logger.info("Updating password for user with ID: {}", id);
-        Mono<Usuarios> userMono = userRepository.findById(id)
-                .switchIfEmpty(Mono.error(new UserNotFoundException("The user with the id " + id + " doesn't exist.")));
+        Mono<Usuarios> userMono = userRepository.findById(id);
 
         return userMono
+                .switchIfEmpty(Mono.error(new UserNotFoundException("The user with the id " + id + " doesn't exist.")))
                 .filter(user -> PasswordUtil.checkPassword(passwordToUpdate.getOldPassword(), user.getPassword()))
                 .flatMap(user -> {
                     user.setPassword(PasswordUtil.hashPassword(passwordToUpdate.getNewPassword()));

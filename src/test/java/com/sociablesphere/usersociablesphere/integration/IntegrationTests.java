@@ -412,7 +412,7 @@ public class IntegrationTests {
         @DisplayName("1 llamada a DELETE /v1/users/{id}")
         void testDeleteUser_1Call() {
             int numberOfCalls = 1;
-            long totalTime = makeMultipleDeleteUserCalls(numberOfCalls);
+            long totalTime = makeMultipleDeleteUserCalls(101,numberOfCalls);
             System.out.println("Tiempo total para 1 llamada: " + totalTime + " ms");
         }
 
@@ -420,7 +420,7 @@ public class IntegrationTests {
         @DisplayName("10 llamadas a DELETE /v1/users/{id}")
         void testDeleteUser_10Calls() {
             int numberOfCalls = 10;
-            long totalTime = makeMultipleDeleteUserCalls(numberOfCalls);
+            long totalTime = makeMultipleDeleteUserCalls(201,numberOfCalls);
             System.out.println("Tiempo total para 10 llamadas: " + totalTime + " ms");
         }
 
@@ -428,15 +428,15 @@ public class IntegrationTests {
         @DisplayName("100 llamadas a DELETE /v1/users/{id}")
         void testDeleteUser_100Calls() {
             int numberOfCalls = 100;
-            long totalTime = makeMultipleDeleteUserCalls(numberOfCalls);
+            long totalTime = makeMultipleDeleteUserCalls(1,numberOfCalls);
             System.out.println("Tiempo total para 100 llamadas: " + totalTime + " ms");
         }
 
-        private long makeMultipleDeleteUserCalls(int numberOfCalls) {
+        private long makeMultipleDeleteUserCalls(int firstId,int numberOfCalls) {
             long startTime = System.currentTimeMillis();
 
             for (int i = 0; i < numberOfCalls; i++) {
-                Long userId = (long) i;
+                Long userId = (long) firstId+i;
 
                 webTestClient.delete()
                         .uri(BASE_URL + "/" + userId)
