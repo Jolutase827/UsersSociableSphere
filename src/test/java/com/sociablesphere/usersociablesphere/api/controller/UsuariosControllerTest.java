@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Flux;
@@ -21,7 +21,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
-public class UserControllerTest {
+public class UsuariosControllerTest {
 
     @Mock
     private UserService userService;
@@ -36,7 +36,6 @@ public class UserControllerTest {
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
 
         Long userId = new Random().nextLong();
 
@@ -98,7 +97,7 @@ public class UserControllerTest {
         // Assert
         StepVerifier.create(response)
                 .assertNext(result -> {
-                    assertThat(result.getStatusCodeValue()).isEqualTo(200);
+                    assertThat(result.getStatusCodeValue()).isEqualTo(201);
                     assertThat(result.getBody()).isEqualTo(userDetailDTO);
                 })
                 .verifyComplete();
@@ -172,8 +171,8 @@ public class UserControllerTest {
     @DisplayName("Test deleteUser deletes a user account")
     public void testDeleteUser() {
         // Arrange
-        Long id = Long.valueOf(Long.toString(Math.abs(new Random().nextLong())));
-        when(userService.deleteAcount(id)).thenReturn(Mono.empty());
+        Long id = Math.abs(new Random().nextLong());
+        when(userService.deleteAccount(id)).thenReturn(Mono.empty());
 
         // Act
         Mono<ResponseEntity<Void>> response = userController.deleteUser(id);
@@ -183,6 +182,6 @@ public class UserControllerTest {
                 .assertNext(result -> assertThat(result.getStatusCodeValue()).isEqualTo(204))
                 .verifyComplete();
 
-        verify(userService, times(1)).deleteAcount(id);
+        verify(userService, times(1)).deleteAccount(id);
     }
 }

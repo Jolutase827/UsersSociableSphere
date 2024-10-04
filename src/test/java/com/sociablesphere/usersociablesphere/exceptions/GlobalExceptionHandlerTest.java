@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.context.request.WebRequest;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -36,7 +37,8 @@ public class GlobalExceptionHandlerTest {
         HttpMessageConversionException exception = new HttpMessageConversionException("Invalid JSON");
 
         // Act
-        ResponseEntity<ErrorResponse> response = exceptionHandler.handleHttpMessageConversionException(exception, webRequest);
+        Mono<ResponseEntity<ErrorResponse>> responseMono = exceptionHandler.handleHttpMessageConversionException(exception, webRequest);
+        ResponseEntity<ErrorResponse> response = responseMono.block();
 
         // Assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -52,7 +54,8 @@ public class GlobalExceptionHandlerTest {
         NumberFormatException exception = new NumberFormatException("For input string: \"abc\"");
 
         // Act
-        ResponseEntity<ErrorResponse> response = exceptionHandler.handleNumberFormatException(exception, webRequest);
+        Mono<ResponseEntity<ErrorResponse>> responseMono = exceptionHandler.handleNumberFormatException(exception, webRequest);
+        ResponseEntity<ErrorResponse> response = responseMono.block();
 
         // Assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -68,7 +71,8 @@ public class GlobalExceptionHandlerTest {
         InvalidCredentialsException exception = new InvalidCredentialsException("Invalid username or password");
 
         // Act
-        ResponseEntity<ErrorResponse> response = exceptionHandler.handleInvalidCredentialsException(exception, webRequest);
+        Mono<ResponseEntity<ErrorResponse>> responseMono = exceptionHandler.handleInvalidCredentialsException(exception, webRequest);
+        ResponseEntity<ErrorResponse> response = responseMono.block();
 
         // Assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
@@ -84,7 +88,8 @@ public class GlobalExceptionHandlerTest {
         UserAlreadyExistsException exception = new UserAlreadyExistsException("User already exists");
 
         // Act
-        ResponseEntity<ErrorResponse> response = exceptionHandler.handleUserAlreadyExistsException(exception, webRequest);
+        Mono<ResponseEntity<ErrorResponse>> responseMono = exceptionHandler.handleUserAlreadyExistsException(exception, webRequest);
+        ResponseEntity<ErrorResponse> response = responseMono.block();
 
         // Assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
@@ -103,7 +108,8 @@ public class GlobalExceptionHandlerTest {
         MethodArgumentNotValidException exception = new MethodArgumentNotValidException(null, bindingResult);
 
         // Act
-        ResponseEntity<ErrorResponse> response = exceptionHandler.handleMethodArgumentNotValid(exception);
+        Mono<ResponseEntity<ErrorResponse>> responseMono = exceptionHandler.handleMethodArgumentNotValid(exception);
+        ResponseEntity<ErrorResponse> response = responseMono.block();
 
         // Assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -120,7 +126,8 @@ public class GlobalExceptionHandlerTest {
         NoSuchElementException exception = new NoSuchElementException("No such element");
 
         // Act
-        ResponseEntity<ErrorResponse> response = exceptionHandler.handleNoSuchElementException(exception, webRequest);
+        Mono<ResponseEntity<ErrorResponse>> responseMono = exceptionHandler.handleNoSuchElementException(exception, webRequest);
+        ResponseEntity<ErrorResponse> response = responseMono.block();
 
         // Assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -136,7 +143,8 @@ public class GlobalExceptionHandlerTest {
         ExecutionControl.InternalException exception = new ExecutionControl.InternalException("Internal error");
 
         // Act
-        ResponseEntity<ErrorResponse> response = exceptionHandler.handleInternalException(exception, webRequest);
+        Mono<ResponseEntity<ErrorResponse>> responseMono = exceptionHandler.handleInternalException(exception, webRequest);
+        ResponseEntity<ErrorResponse> response = responseMono.block();
 
         // Assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -152,7 +160,8 @@ public class GlobalExceptionHandlerTest {
         ExternalMicroserviceException exception = new ExternalMicroserviceException("External service error");
 
         // Act
-        ResponseEntity<ErrorResponse> response = exceptionHandler.handleExternalMicroserviceException(exception, webRequest);
+        Mono<ResponseEntity<ErrorResponse>> responseMono = exceptionHandler.handleExternalMicroserviceException(exception, webRequest);
+        ResponseEntity<ErrorResponse> response = responseMono.block();
 
         // Assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -168,7 +177,8 @@ public class GlobalExceptionHandlerTest {
         UserNotFoundException exception = new UserNotFoundException("User not found");
 
         // Act
-        ResponseEntity<ErrorResponse> response = exceptionHandler.handleUserNotFoundException(exception, webRequest);
+        Mono<ResponseEntity<ErrorResponse>> responseMono = exceptionHandler.handleUserNotFoundException(exception, webRequest);
+        ResponseEntity<ErrorResponse> response = responseMono.block();
 
         // Assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
