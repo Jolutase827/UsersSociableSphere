@@ -5,7 +5,7 @@ import com.sociablesphere.usersociablesphere.exceptions.InvalidCredentialsExcept
 import com.sociablesphere.usersociablesphere.exceptions.UserAlreadyExistsException;
 import com.sociablesphere.usersociablesphere.exceptions.UserNotFoundException;
 import com.sociablesphere.usersociablesphere.mapper.UserMapper;
-import com.sociablesphere.usersociablesphere.model.User;
+import com.sociablesphere.usersociablesphere.model.Usuarios;
 import com.sociablesphere.usersociablesphere.privacy.PasswordUtil;
 import com.sociablesphere.usersociablesphere.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Mono<UserDetailDTO> updateUser(Long id, UserCreationDTO dataToModify) {
-        Mono<User> userMono = userRepository.findById(id)
+        Mono<Usuarios> userMono = userRepository.findById(id)
                                     .switchIfEmpty(Mono.error(new UserNotFoundException("The user with the id "+id+
                                                                                         " doesn't exists.")));;
         return userMono
@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Mono<UserDetailDTO> updatePassword(Long id, UserPasswordDTO passwordToUpdate) {
-        Mono<User> userMono = userRepository.findById(id)
+        Mono<Usuarios> userMono = userRepository.findById(id)
                                         .switchIfEmpty(Mono.error(new UserNotFoundException("The user with the id "+id+
                                                                                             " doesn't exists.")));
         return userMono

@@ -1,7 +1,7 @@
 package com.sociablesphere.usersociablesphere.integration;
 
 import com.sociablesphere.usersociablesphere.api.dto.*;
-import com.sociablesphere.usersociablesphere.model.User;
+import com.sociablesphere.usersociablesphere.model.Usuarios;
 import com.sociablesphere.usersociablesphere.repository.UserRepository;
 import com.sociablesphere.usersociablesphere.privacy.PasswordUtil;
 
@@ -14,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
@@ -36,7 +35,7 @@ public class IntegrationTests {
 
     @Nested
     @DisplayName("POST /v1/users/create")
-    class RegisterUserTests {
+    class RegisterUsuariosTests {
 
         @Test
         @DisplayName("1 llamada a POST /v1/users/create")
@@ -95,13 +94,13 @@ public class IntegrationTests {
 
     @Nested
     @DisplayName("POST /v1/users/login")
-    class LoginUserTests {
+    class LoginUsuariosTests {
 
         @BeforeEach
         void setupUsers() {
             // Crear usuarios para las pruebas de login
-            Flux<User> users = Flux.range(0, 100)
-                    .map(i -> User.builder()
+            Flux<Usuarios> users = Flux.range(0, 100)
+                    .map(i -> Usuarios.builder()
                             .userName("testuser" + i)
                             .name("Test")
                             .lastName("User")
@@ -173,8 +172,8 @@ public class IntegrationTests {
         @BeforeEach
         void setupUsers() {
             // Crear usuarios para las pruebas de obtención
-            Flux<User> users = Flux.range(0, 10) // Puedes ajustar el número de usuarios
-                    .map(i -> User.builder()
+            Flux<Usuarios> users = Flux.range(0, 10) // Puedes ajustar el número de usuarios
+                    .map(i -> Usuarios.builder()
                             .userName("testuser" + i)
                             .name("Test")
                             .lastName("User")
@@ -237,11 +236,11 @@ public class IntegrationTests {
     @DisplayName("PUT /v1/users/{id}/password")
     class UpdatePasswordTests {
 
-        private User user;
+        private Usuarios usuarios;
 
         @BeforeEach
         void setupUser() {
-            user = User.builder()
+            usuarios = Usuarios.builder()
                     .userName("testuser")
                     .name("Test")
                     .lastName("User")
@@ -253,7 +252,7 @@ public class IntegrationTests {
                     .createdAt(LocalDateTime.now())
                     .updatedAt(LocalDateTime.now())
                     .build();
-            user = userRepository.save(user).block();
+            usuarios = userRepository.save(usuarios).block();
         }
 
         @Test
@@ -284,8 +283,8 @@ public class IntegrationTests {
             long startTime = System.currentTimeMillis();
 
             for (int i = 0; i < numberOfCalls; i++) {
-                user.setPassword(PasswordUtil.hashPassword("OldPassword123"));
-                userRepository.save(user).block();
+                usuarios.setPassword(PasswordUtil.hashPassword("OldPassword123"));
+                userRepository.save(usuarios).block();
 
                 UserPasswordDTO userPasswordDTO = UserPasswordDTO.builder()
                         .oldPassword("OldPassword123")
@@ -293,13 +292,13 @@ public class IntegrationTests {
                         .build();
 
                 webTestClient.put()
-                        .uri(BASE_URL + "/" + user.getId() + "/password")
+                        .uri(BASE_URL + "/" + usuarios.getId() + "/password")
                         .bodyValue(userPasswordDTO)
                         .exchange()
                         .expectStatus().isOk()
                         .expectBody(UserDetailDTO.class)
                         .value(userDetail -> {
-                            assertThat(userDetail.getEmail()).isEqualTo(user.getEmail());
+                            assertThat(userDetail.getEmail()).isEqualTo(usuarios.getEmail());
                         });
             }
 
@@ -310,13 +309,13 @@ public class IntegrationTests {
 
     @Nested
     @DisplayName("PUT /v1/users/{id}")
-    class UpdateUserTests {
+    class UpdateUsuariosTests {
 
-        private User user;
+        private Usuarios usuarios;
 
         @BeforeEach
         void setupUser() {
-            user = User.builder()
+            usuarios = Usuarios.builder()
                     .userName("testuser")
                     .name("Test")
                     .lastName("User")
@@ -328,7 +327,7 @@ public class IntegrationTests {
                     .createdAt(LocalDateTime.now())
                     .updatedAt(LocalDateTime.now())
                     .build();
-            userRepository.save(user).block();
+            userRepository.save(usuarios).block();
         }
 
         @Test
@@ -371,7 +370,7 @@ public class IntegrationTests {
                         .build();
 
                 webTestClient.put()
-                        .uri(BASE_URL + "/" + user.getId())
+                        .uri(BASE_URL + "/" + usuarios.getId())
                         .bodyValue(updateDTO)
                         .exchange()
                         .expectStatus().isOk()
@@ -388,12 +387,12 @@ public class IntegrationTests {
 
     @Nested
     @DisplayName("DELETE /v1/users/{id}")
-    class DeleteUserTests {
+    class DeleteUsuariosTests {
 
         @BeforeEach
         void setupUsers() {
-            Flux<User> users = Flux.range(0, 100)
-                    .map(i -> User.builder()
+            Flux<Usuarios> users = Flux.range(0, 100)
+                    .map(i -> Usuarios.builder()
                             .userName("testuser" + i)
                             .name("Test")
                             .lastName("User")

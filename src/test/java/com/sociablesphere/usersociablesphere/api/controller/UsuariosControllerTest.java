@@ -21,7 +21,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
-public class UserControllerTest {
+public class UsuariosControllerTest {
 
     @Mock
     private UserService userService;

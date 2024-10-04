@@ -1,12 +1,11 @@
 package com.sociablesphere.usersociablesphere.service.user;
 
-import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserDetailDTO;
 import com.sociablesphere.usersociablesphere.exceptions.InvalidCredentialsException;
 import com.sociablesphere.usersociablesphere.exceptions.UserAlreadyExistsException;
 import com.sociablesphere.usersociablesphere.exceptions.UserNotFoundException;
 import com.sociablesphere.usersociablesphere.mapper.UserMapper;
-import com.sociablesphere.usersociablesphere.model.User;
+import com.sociablesphere.usersociablesphere.model.Usuarios;
 import com.sociablesphere.usersociablesphere.repository.UserRepository;
 import static com.sociablesphere.usersociablesphere.service.Data.DataUserServiceImplTest.*;
 
@@ -46,8 +45,8 @@ class userServiceImplTest {
         @DisplayName("Given a valid user,Then sing up and return user details")
         void registerValidUser() {
             //Given
-            User userEntity = UserMapper.toUser(USER_RETURN);
-            when(userRepository.save(any())).thenReturn(Mono.just(userEntity));
+            Usuarios usuarios = UserMapper.toUser(USER_RETURN);
+            when(userRepository.save(any())).thenReturn(Mono.just(usuarios));
             when(userRepository.findByEmail(any())).thenReturn(Mono.empty());
             when(userRepository.findByUserName(USER_RETURN.getUserName())).thenReturn(Mono.empty());
 
@@ -61,7 +60,7 @@ class userServiceImplTest {
                         assertThat(userDetailDTO)
                                 .isInstanceOf(UserDetailDTO.class)
                                 .usingRecursiveComparison()
-                                .isEqualTo(userEntity);
+                                .isEqualTo(usuarios);
                     })
                     .verifyComplete();
             verify(userRepository).save(any());
@@ -73,9 +72,9 @@ class userServiceImplTest {
         @DisplayName("Given a user with userName that already exists," +
                     " Then throw an UserAlreadyExistsException with username message")
         void registerErrorSameName() {
-            User userEntity = UserMapper.toUser(USER_RETURN);
+            Usuarios usuarios = UserMapper.toUser(USER_RETURN);
             when(userRepository.findByEmail(any())).thenReturn(Mono.empty());
-            when(userRepository.findByUserName(USER_RETURN.getUserName())).thenReturn(Mono.just(userEntity));
+            when(userRepository.findByUserName(USER_RETURN.getUserName())).thenReturn(Mono.just(usuarios));
 
             //When
             Mono<UserDetailDTO> userDetailDTOMono = userService.register(USER_RETURN);
@@ -97,8 +96,8 @@ class userServiceImplTest {
                 " Then throw an UserAlreadyExistsException with email message")
         void registerErrorSameEmail() {
             //Given
-            User userEntity = UserMapper.toUser(USER_RETURN);
-            when(userRepository.findByEmail(any())).thenReturn(Mono.just(userEntity));
+            Usuarios usuarios = UserMapper.toUser(USER_RETURN);
+            when(userRepository.findByEmail(any())).thenReturn(Mono.just(usuarios));
 
 
             //When
@@ -124,9 +123,9 @@ class userServiceImplTest {
         @DisplayName("Given valid user ID and correct old password, Then update the password")
         void updatePasswordValid() {
             // Given
-            User userEntity = UserMapper.toUser(USER_RETURN);
-            when(userRepository.findById(anyLong())).thenReturn(Mono.just(userEntity));
-            when(userRepository.save(any())).thenReturn(Mono.just(userEntity));
+            Usuarios usuarios = UserMapper.toUser(USER_RETURN);
+            when(userRepository.findById(anyLong())).thenReturn(Mono.just(usuarios));
+            when(userRepository.save(any())).thenReturn(Mono.just(usuarios));
 
             // When
             Mono<UserDetailDTO> userDetailDTOMono = userService.updatePassword(USER_ID, USER_PASSWORD_DTO);
@@ -137,7 +136,7 @@ class userServiceImplTest {
                         assertThat(userDetailDTO)
                                 .isInstanceOf(UserDetailDTO.class)
                                 .usingRecursiveComparison()
-                                .isEqualTo(UserMapper.toUserDetailDTO(userEntity));
+                                .isEqualTo(UserMapper.toUserDetailDTO(usuarios));
                     })
                     .verifyComplete();
 
@@ -149,8 +148,8 @@ class userServiceImplTest {
         @DisplayName("Given valid user ID and incorrect old password, Then throw InvalidCredentialsException")
         void updatePasswordInValid() {
             // Given
-            User userEntity = UserMapper.toUser(USER_RETURN);
-            when(userRepository.findById(anyLong())).thenReturn(Mono.just(userEntity));
+            Usuarios usuarios = UserMapper.toUser(USER_RETURN);
+            when(userRepository.findById(anyLong())).thenReturn(Mono.just(usuarios));
 
             // When
             Mono<UserDetailDTO> userDetailDTOMono = userService.updatePassword(USER_ID, USER_WRONG_PASSWORD_DTO);
@@ -190,8 +189,8 @@ class userServiceImplTest {
         @DisplayName("Find all users and return their details")
         void findAllUsers() {
             // Given
-            User userEntity = UserMapper.toUser(USER_RETURN);
-            when(userRepository.findAll()).thenReturn(Flux.just(userEntity));
+            Usuarios usuarios = UserMapper.toUser(USER_RETURN);
+            when(userRepository.findAll()).thenReturn(Flux.just(usuarios));
 
             // When
             Flux<UserDetailDTO> userDetailDTOFlux = userService.findAll();
@@ -202,7 +201,7 @@ class userServiceImplTest {
                         assertThat(userDetailDTO)
                                 .isInstanceOf(UserDetailDTO.class)
                                 .usingRecursiveComparison()
-                                .isEqualTo(UserMapper.toUserDetailDTO(userEntity));
+                                .isEqualTo(UserMapper.toUserDetailDTO(usuarios));
                         return true;
                     })
                     .verifyComplete();
@@ -213,14 +212,14 @@ class userServiceImplTest {
 
     @Nested
     @DisplayName("Login User")
-    class LoginUser {
+    class LoginUsuarios {
         @Test
         @DisplayName("Given valid email and password, Then return user details")
         void loginUserValid() {
             // Given
-            User userEntity = UserMapper.toUser(USER_RETURN);
-            when(userRepository.findByEmail(any())).thenReturn(Mono.just(userEntity));
-            when(userRepository.findByUserName(any())).thenReturn(Mono.just(userEntity));
+            Usuarios usuarios = UserMapper.toUser(USER_RETURN);
+            when(userRepository.findByEmail(any())).thenReturn(Mono.just(usuarios));
+            when(userRepository.findByUserName(any())).thenReturn(Mono.just(usuarios));
 
 
             // When
@@ -232,7 +231,7 @@ class userServiceImplTest {
                         assertThat(userDetailDTO)
                                 .isInstanceOf(UserDetailDTO.class)
                                 .usingRecursiveComparison()
-                                .isEqualTo(UserMapper.toUserDetailDTO(userEntity));
+                                .isEqualTo(UserMapper.toUserDetailDTO(usuarios));
                     })
                     .verifyComplete();
 
@@ -265,15 +264,15 @@ class userServiceImplTest {
 
     @Nested
     @DisplayName("Update User")
-    class UpdateUser {
+    class UpdateUsuarios {
 
         @Test
         @DisplayName("Given valid user ID and correct password, Then update the user details")
         void updateUserValid() {
             // Given
-            User userEntity = UserMapper.toUser(USER_RETURN);
-            when(userRepository.findById(USER_ID)).thenReturn(Mono.just(userEntity));
-            when(userRepository.save(any())).thenReturn(Mono.just(userEntity));
+            Usuarios usuarios = UserMapper.toUser(USER_RETURN);
+            when(userRepository.findById(USER_ID)).thenReturn(Mono.just(usuarios));
+            when(userRepository.save(any())).thenReturn(Mono.just(usuarios));
 
             // When
             Mono<UserDetailDTO> userDetailDTOMono = userService.updateUser(USER_ID, USER_RETURN);
@@ -284,7 +283,7 @@ class userServiceImplTest {
                         assertThat(userDetailDTO)
                                 .isInstanceOf(UserDetailDTO.class)
                                 .usingRecursiveComparison()
-                                .isEqualTo(UserMapper.toUserDetailDTO(userEntity));
+                                .isEqualTo(UserMapper.toUserDetailDTO(usuarios));
                     })
                     .verifyComplete();
 
@@ -315,10 +314,10 @@ class userServiceImplTest {
         @DisplayName("Given valid user ID but incorrect current password, Then do not update and return error")
         void updateUserInvalidPassword() {
             // Given
-            User userEntity = UserMapper.toUser(USER_RETURN);
+            Usuarios usuarios = UserMapper.toUser(USER_RETURN);
 
 
-            when(userRepository.findById(USER_ID)).thenReturn(Mono.just(userEntity));
+            when(userRepository.findById(USER_ID)).thenReturn(Mono.just(usuarios));
 
             // When
             Mono<UserDetailDTO> userDetailDTOMono = userService.updateUser(USER_ID, INVALID_PASSWORD_DTO);

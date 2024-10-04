@@ -9,16 +9,16 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-public class UserTests {
+public class UsuariosTests {
     @Nested
     @DisplayName("Update User Data")
-    class UpdateUserData {
+    class UpdateUsuariosData {
 
         @Test
         @DisplayName("Given a valid UserCreationDTO, Then update the user's data successfully")
         void updateUserDataValid() {
             // Given
-            User user = User.builder().build();
+            Usuarios usuarios = Usuarios.builder().build();
             UserCreationDTO userCreationDTO = UserCreationDTO.builder()
                     .description("New description")
                     .email("newemail@example.com")
@@ -30,50 +30,50 @@ public class UserTests {
                     .build();
 
             // When
-            user.updateData(userCreationDTO);
+            usuarios.updateData(userCreationDTO);
 
             // Then
-            assertThat(user)
-                    .extracting(User::getDescription, User::getEmail, User::getName, User::getRole,
-                            User::getUserName, User::getPhoto, User::getLastName)
+            assertThat(usuarios)
+                    .extracting(Usuarios::getDescription, Usuarios::getEmail, Usuarios::getName, Usuarios::getRole,
+                            Usuarios::getUserName, Usuarios::getPhoto, Usuarios::getLastName)
                     .containsExactly("New description", "newemail@example.com", "New Name", "Admin",
                             "newusername", "newphoto.jpg", "New LastName");
 
-            assertThat(user.getUpdatedAt()).isNotNull();
+            assertThat(usuarios.getUpdatedAt()).isNotNull();
         }
 
         @Test
         @DisplayName("Given a UserCreationDTO with null fields, Then the user's data is updated with null values")
         void updateUserDataWithNullFields() {
             // Given
-            User user = User.builder().build();
+            Usuarios usuarios = Usuarios.builder().build();
             UserCreationDTO userCreationDTO = UserCreationDTO.builder().build();
 
             // When
-            user.updateData(userCreationDTO);
+            usuarios.updateData(userCreationDTO);
 
             // Then
-            assertThat(user)
-                    .extracting(User::getDescription, User::getEmail, User::getName, User::getRole,
-                            User::getUserName, User::getPhoto, User::getLastName)
+            assertThat(usuarios)
+                    .extracting(Usuarios::getDescription, Usuarios::getEmail, Usuarios::getName, Usuarios::getRole,
+                            Usuarios::getUserName, Usuarios::getPhoto, Usuarios::getLastName)
                     .containsExactly(null, null, null, null, null, null, null);
 
-            assertThat(user.getUpdatedAt()).isNotNull();
+            assertThat(usuarios.getUpdatedAt()).isNotNull();
         }
 
         @Test
         @DisplayName("Ensure updateData updates updatedAt field to the current time")
         void updateUpdatedAtField() {
             // Given
-            User user = User.builder().build();
+            Usuarios usuarios = Usuarios.builder().build();
             LocalDateTime beforeUpdate = LocalDateTime.now();
             UserCreationDTO userCreationDTO = UserCreationDTO.builder().build();
 
             // When
-            user.updateData(userCreationDTO);
+            usuarios.updateData(userCreationDTO);
 
             // Then
-            assertThat(user.getUpdatedAt()).isAfterOrEqualTo(beforeUpdate);
+            assertThat(usuarios.getUpdatedAt()).isAfterOrEqualTo(beforeUpdate);
         }
     }
 
