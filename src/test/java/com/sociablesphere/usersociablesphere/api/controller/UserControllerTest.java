@@ -86,6 +86,7 @@ public class UserControllerTest {
         verify(userService, times(1)).findAll();
     }
 
+
     @Test
     @DisplayName("Test registerUser registers a new user")
     public void testRegisterUser() {

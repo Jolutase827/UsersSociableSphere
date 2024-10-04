@@ -346,7 +346,7 @@ class userServiceImplTest {
             when(userRepository.deleteById(userId)).thenReturn(Mono.empty());
 
             // When
-            Mono<Void> result = userService.deleteAcount(userId);
+            Mono<Void> result = userService.deleteAccount(userId);
 
             // Then
             StepVerifier.create(result)
@@ -364,7 +364,7 @@ class userServiceImplTest {
             when(userRepository.findById(userId)).thenReturn(Mono.empty());
 
             // When
-            Mono<Void> result = userService.deleteAcount(userId);
+            Mono<Void> result = userService.deleteAccount(userId);
 
             // Then
             StepVerifier.create(result)
