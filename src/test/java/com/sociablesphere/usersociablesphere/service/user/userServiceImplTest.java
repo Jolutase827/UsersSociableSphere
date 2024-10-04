@@ -299,10 +299,9 @@ class userServiceImplTest {
             when(userRepository.findById(USER_ID)).thenReturn(Mono.empty());
 
             // When
-            Mono<UserDetailDTO> userDetailDTOMono = userService.updateUser(USER_ID, USER_RETURN);
 
             // Then
-            StepVerifier.create(userDetailDTOMono)
+            StepVerifier.create(userService.updateUser(USER_ID, USER_RETURN))
                     .expectErrorMatches(error -> error instanceof UserNotFoundException &&
                             error.getMessage().equals("The user with the id " + USER_ID + " doesn't exists."))
                     .verify();
