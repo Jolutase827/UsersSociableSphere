@@ -86,6 +86,7 @@ public class UsuariosControllerTest {
         verify(userService, times(1)).findAll();
     }
 
+
     @Test
     @DisplayName("Test registerUser registers a new user")
     public void testRegisterUser() {
@@ -173,7 +174,7 @@ public class UsuariosControllerTest {
     public void testDeleteUser() {
         // Arrange
         Long id = Long.valueOf(Long.toString(Math.abs(new Random().nextLong())));
-        when(userService.deleteAcount(id)).thenReturn(Mono.empty());
+        when(userService.deleteAccount(id)).thenReturn(Mono.empty());
 
         // Act
         Mono<ResponseEntity<Void>> response = userController.deleteUser(id);
@@ -183,6 +184,6 @@ public class UsuariosControllerTest {
                 .assertNext(result -> assertThat(result.getStatusCodeValue()).isEqualTo(204))
                 .verifyComplete();
 
-        verify(userService, times(1)).deleteAcount(id);
+        verify(userService, times(1)).deleteAccount(id);
     }
 }
