@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Flux;
@@ -36,7 +36,6 @@ public class UsuariosControllerTest {
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
 
         Long userId = new Random().nextLong();
 
@@ -85,7 +84,6 @@ public class UsuariosControllerTest {
 
         verify(userService, times(1)).findAll();
     }
-
 
     @Test
     @DisplayName("Test registerUser registers a new user")
@@ -173,7 +171,7 @@ public class UsuariosControllerTest {
     @DisplayName("Test deleteUser deletes a user account")
     public void testDeleteUser() {
         // Arrange
-        Long id = Long.valueOf(Long.toString(Math.abs(new Random().nextLong())));
+        Long id = Math.abs(new Random().nextLong());
         when(userService.deleteAccount(id)).thenReturn(Mono.empty());
 
         // Act

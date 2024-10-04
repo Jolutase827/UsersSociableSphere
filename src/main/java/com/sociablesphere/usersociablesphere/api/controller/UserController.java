@@ -8,6 +8,7 @@ import com.sociablesphere.usersociablesphere.service.user.UserService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -38,10 +39,11 @@ public class UserController {
         logger.info("Attempting to register user with email: {}", userCreationDTO.getEmail());
         Mono<UserDetailDTO> user = userService.register(userCreationDTO);
         return user
-                .map(ResponseEntity::ok)
+                .map(userDetail -> ResponseEntity.status(HttpStatus.CREATED).body(userDetail))
                 .doOnSuccess(u -> logger.info("User registered successfully with email: {}", userCreationDTO.getEmail()))
                 .doOnError(e -> logger.error("Error registering user", e));
     }
+
 
     @PostMapping("/login")
     public Mono<ResponseEntity<UserDetailDTO>> loginUser(@Valid @RequestBody UserLoginDTO userLoginDTO) {
