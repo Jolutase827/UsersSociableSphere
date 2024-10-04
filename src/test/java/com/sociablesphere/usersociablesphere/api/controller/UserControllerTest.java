@@ -173,7 +173,7 @@ public class UserControllerTest {
     public void testDeleteUser() {
         // Arrange
         Long id = Long.valueOf(Long.toString(Math.abs(new Random().nextLong())));
-        when(userService.deleteAcount(id)).thenReturn(Mono.empty());
+        when(userService.deleteAccount(id)).thenReturn(Mono.empty());
 
         // Act
         Mono<ResponseEntity<Void>> response = userController.deleteUser(id);
@@ -183,6 +183,6 @@ public class UserControllerTest {
                 .assertNext(result -> assertThat(result.getStatusCodeValue()).isEqualTo(204))
                 .verifyComplete();
 
-        verify(userService, times(1)).deleteAcount(id);
+        verify(userService, times(1)).deleteAccount(id);
     }
 }
