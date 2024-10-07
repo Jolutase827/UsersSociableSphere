@@ -41,7 +41,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UserCreationDTO'
-         
+
       responses:
         default:
           description: successful operation
@@ -49,7 +49,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserDetailDTO'
-                
+
   /v1/users/login:
     post:
       tags:
@@ -63,7 +63,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UserLoginDTO'
-         
+
       responses:
         default:
           description: successful operation
@@ -71,7 +71,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserDetailDTO'
-                
+
   /v1/users/{id}/password:
     patch:
       tags:
@@ -93,7 +93,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UserPasswordDTO'
-         
+
       responses:
         default:
           description: successful operation
@@ -101,7 +101,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserDetailDTO'
-                
+
   /v1/users/{id}:
     put:
       tags:
@@ -123,7 +123,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UserCreationDTO'
-         
+
       responses:
         default:
           description: successful operation
@@ -131,13 +131,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserDetailDTO'
-  /v1/users/{apiToken}:
     delete:
       tags:
         - user
       summary: Create user
       description: This can only be done by the logged in user.
       operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          description: ID of user to change the password
+          required: true
+          schema:
+            type: string
+            format: uuid
+
+      responses:
+        default:
+          description: successful operation
+
+  /v1/users/{apiToken}:
+    get:
+      tags:
+        - user
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: Get user by api token
       parameters:
         - name: apiToken
           in: path
@@ -146,12 +165,16 @@ paths:
           schema:
             type: string
             format: uuid
-         
+
       responses:
         default:
           description: successful operation
-          
-                
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetailDTO'
+
+
 components:
   schemas:
     UserCreationDTO:
