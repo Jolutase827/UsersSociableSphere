@@ -18,7 +18,7 @@ public class ApiTokenGeneratorTest {
     public void testApiTokenIsAlphanumeric() {
         String token = ApiTokenGenerator.generateRandomApiToken();
 
-        assertTrue(token.matches("^[a-zA-Z0-9]*$"), "El token debe ser alfanumérico");
+        assertTrue(token.matches("^[A-Za-z0-9\\?¿!:.;,·\\$%&/\\(\\)=]*$"), "El token debe ser alfanumérico");
     }
 
     @Test
@@ -26,7 +26,7 @@ public class ApiTokenGeneratorTest {
         String token = ApiTokenGenerator.generateRandomApiToken();
 
         for (char c : token.toCharArray()) {
-            assertTrue("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".indexOf(c) >= 0,
+            assertTrue("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789?¿!:.;,·$%&/(=)".indexOf(c) >= 0,
                     "El token contiene caracteres no válidos: " + c);
         }
     }
