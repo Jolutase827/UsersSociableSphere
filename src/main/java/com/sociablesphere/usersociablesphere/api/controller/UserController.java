@@ -93,4 +93,14 @@ public class UserController {
                 .doOnSuccess(u -> logger.info("User found successfully with apiToken: {}", apiToken))
                 .doOnError(e -> logger.error("Error logging in user", e));
     }
+
+    @GetMapping("/{id}")
+    public Mono<ResponseEntity<UserDetailDTO>> getUserById(@PathVariable Long id) {
+        logger.info("Fetching user with ID: {}", id);
+        return userService.findById(id)
+                .map(ResponseEntity::ok)
+                .doOnSuccess(user -> logger.info("User found successfully with ID: {}", id))
+                .doOnError(e -> logger.error("Error fetching user with ID: {}", id, e));
+    }
+
 }

@@ -11,6 +11,7 @@ public interface UserRepository extends R2dbcRepository<Usuarios,Long> {
     public Mono<Usuarios> findByUserName(String userName);
     public Mono<Usuarios> findByEmail(String email);
     public Mono<Usuarios> findByApiToken(String apiToken);
+    public Mono<Usuarios> findById(Long id);
 }
 
 

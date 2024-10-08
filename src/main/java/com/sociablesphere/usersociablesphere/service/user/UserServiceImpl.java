@@ -125,4 +125,15 @@ public class UserServiceImpl implements UserService {
                 .map(UserMapper::toUserDetailDTO)
                 .doOnError(e -> logger.error("Finding failed for user: {}", e.getMessage()));
     }
+
+    @Override
+    public Mono<UserDetailDTO> findById(Long id) {
+        logger.info("Finding user with ID: {}", id);
+        return userRepository.findById(id)
+                .switchIfEmpty(Mono.error(new UserNotFoundException("User with ID " + id + " not found")))
+                .doOnSuccess(user -> logger.info("User found successfully with ID: {}", id))
+                .map(UserMapper::toUserDetailDTO)
+                .doOnError(e -> logger.error("Error finding user with ID: {}", id, e));
+    }
+
 }

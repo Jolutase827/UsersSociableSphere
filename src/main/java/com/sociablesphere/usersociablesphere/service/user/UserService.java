@@ -25,6 +25,7 @@ public interface UserService {
     Flux<UserDetailDTO> findAll();
 
     Mono<UserDetailDTO> findByApiToken(String apiToken);
+    Mono<UserDetailDTO> findById(Long id);
 
 
 }
