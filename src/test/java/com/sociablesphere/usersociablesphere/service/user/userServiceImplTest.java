@@ -375,5 +375,26 @@ class userServiceImplTest {
         }
     }
 
+    @Test
+    @DisplayName("Test findByApiToken returns UserDetailDTO when valid token is provided")
+    public void testFindByApiToken_Success() {
+
+        String validApiToken = "validApiToken";
+        Usuarios user = new Usuarios(1L, "user", "John", "Doe", "john.doe@example.com", null, null, "hashedPassword", "USER", null, validApiToken, null, null);
+
+        when(userRepository.findByApiToken(validApiToken)).thenReturn(Mono.just(user));
+
+        // Act
+        Mono<UserDetailDTO> response = userService.findByApiToken(validApiToken);
+
+        // Assert
+        StepVerifier.create(response)
+                .assertNext(result -> {
+                    assertThat(result).isEqualTo(UserMapper.toUserDetailDTO(user));
+                })
+                .verifyComplete();
+
+        verify(userRepository, times(1)).findByApiToken(validApiToken);
+    }
 
 }

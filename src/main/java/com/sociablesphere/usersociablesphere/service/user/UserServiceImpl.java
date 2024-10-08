@@ -114,4 +114,15 @@ public class UserServiceImpl implements UserService {
                 .doOnError(e -> logger.error("Error fetching users", e))
                 .map(UserMapper::toUserDetailDTO);
     }
+
+    @Override
+    public Mono<UserDetailDTO> findByApiToken(String apiToken) {
+        logger.info("Finding user with ApiToken: {}", apiToken);
+
+        return userRepository.findByApiToken(apiToken)
+                .switchIfEmpty(Mono.error(new InvalidCredentialsException("No se encontró un usuario con el apiToken proporcionado.")))
+                .doOnSuccess(user -> logger.info("User found successfully: {}", user.getId()))
+                .map(UserMapper::toUserDetailDTO)
+                .doOnError(e -> logger.error("Finding failed for user: {}", e.getMessage()));
+    }
 }

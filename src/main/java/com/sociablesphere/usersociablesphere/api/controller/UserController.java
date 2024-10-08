@@ -4,6 +4,7 @@ import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserDetailDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserLoginDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserPasswordDTO;
+import com.sociablesphere.usersociablesphere.exceptions.InvalidCredentialsException;
 import com.sociablesphere.usersociablesphere.service.user.UserService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -84,5 +85,12 @@ public class UserController {
                 .doOnError(e -> logger.error("Error occurred while deleting user with ID: {}", id, e));
     }
 
-
+    @GetMapping("/apiToken")
+    public Mono<ResponseEntity<UserDetailDTO>> getUserByApiToken(@RequestParam String apiToken) {
+        logger.info("Fetching a user by ApiToken");
+        return userService.findByApiToken(apiToken)
+                .map(ResponseEntity::ok)
+                .doOnSuccess(u -> logger.info("User found successfully with apiToken: {}", apiToken))
+                .doOnError(e -> logger.error("Error logging in user", e));
+    }
 }
