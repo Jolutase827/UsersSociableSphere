@@ -8,8 +8,6 @@ spring:
     url: r2dbc:postgresql://socialsphere_root:socialsphere@postgresql-socialsphere.alwaysdata.net:5432/socialsphere_users
     username: socialsphere_root
     password: socialsphere
-  server:
-    port: 8081
   logging:
     level:
       root: DEBUG
@@ -21,3 +19,5 @@ spring:
     init:
       mode: never
 
+server:
+  port: 8081
