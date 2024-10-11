@@ -60,4 +60,21 @@ public class UserController {
                 .then(userResponseService.buildNoContentResponse())
                 .doOnSuccess(v -> logger.info("User with ID: {} deleted successfully", id));
     }
+
+    @GetMapping("/apiToken")
+    public Mono<ResponseEntity<UserDetailDTO>> getUserByApiToken(@RequestParam String apiToken) {
+        logger.info("Fetching a user by ApiToken");
+        return userService.findByApiToken(apiToken)
+                .map(ResponseEntity::ok)
+                .doOnSuccess(u -> logger.info("User found successfully with apiToken: {}", apiToken));
+    }
+
+    @GetMapping("/{id}")
+    public Mono<ResponseEntity<UserDetailDTO>> getUserById(@PathVariable Long id) {
+        logger.info("Fetching user with ID: {}", id);
+        return userService.findById(id)
+                .map(ResponseEntity::ok)
+                .doOnSuccess(user -> logger.info("User found successfully with ID: {}", id));
+    }
+
 }

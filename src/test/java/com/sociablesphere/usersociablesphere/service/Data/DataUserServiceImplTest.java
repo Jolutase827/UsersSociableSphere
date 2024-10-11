@@ -59,4 +59,14 @@ public class DataUserServiceImplTest {
             .password("wrongPassword")
             .role("normal")
             .build();
+
+    public static final UserDetailDTO USER_DETAIL_DTO = UserDetailDTO.builder()
+            .userName("JoseLuis")
+            .name("Jose")
+            .lastName("Luis")
+            .email("paco@example.com")
+            .photo("/profile_picture/joseLuis.png")
+            .description("Me gustan las peras!!!")
+            .role("normal")
+            .build();
 }

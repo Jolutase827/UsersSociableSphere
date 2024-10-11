@@ -187,4 +187,44 @@ class UserControllerTest {
         verify(userResponseService).buildNoContentResponse();
     }
 
+    @Test
+    @DisplayName("Test find user by apiToken")
+    public void testFindByApiToken() {
+
+        String validApiToken = "validApiToken";
+
+        when(userService.findByApiToken(validApiToken)).thenReturn(Mono.just(userDetailDTO));
+
+        // Act
+        Mono<ResponseEntity<UserDetailDTO>> response = userController.getUserByApiToken(validApiToken);
+
+        // Assert
+        StepVerifier.create(response)
+                .assertNext(result -> {
+                    assertThat(result.getStatusCodeValue()).isEqualTo(200);
+                    assertThat(result.getBody()).isEqualTo(userDetailDTO);
+                })
+                .verifyComplete();
+
+        verify(userService, times(1)).findByApiToken(validApiToken);
+    }
+
+    @Test
+    @DisplayName("Test find user by ID")
+    public void testGetUserById() {
+        Long userId = userDetailDTO.getId();
+        when(userService.findById(userId)).thenReturn(Mono.just(userDetailDTO));
+
+        Mono<ResponseEntity<UserDetailDTO>> response = userController.getUserById(userId);
+
+        StepVerifier.create(response)
+                .assertNext(result -> {
+                    assertThat(result.getStatusCodeValue()).isEqualTo(200);
+                    assertThat(result.getBody()).isEqualTo(userDetailDTO);
+                })
+                .verifyComplete();
+
+        verify(userService, times(1)).findById(userId);
+    }
+
 }

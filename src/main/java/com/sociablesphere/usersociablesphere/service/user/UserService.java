@@ -4,6 +4,7 @@ import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserDetailDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserLoginDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserPasswordDTO;
+import com.sociablesphere.usersociablesphere.model.Usuarios;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -22,5 +23,9 @@ public interface UserService {
     Mono<UserDetailDTO> updatePassword(Long id, UserPasswordDTO passwordToUpdate);
 
     Flux<UserDetailDTO> findAll();
+
+    Mono<UserDetailDTO> findByApiToken(String apiToken);
+    Mono<UserDetailDTO> findById(Long id);
+
 
 }

@@ -414,7 +414,7 @@ public class IntegrationTests {
         @DisplayName("1 llamada a DELETE /v1/users/{id}")
         void testDeleteUser_1Call() {
             int numberOfCalls = 1;
-            long totalTime = makeMultipleDeleteUserCalls(101,numberOfCalls);
+            long totalTime = makeMultipleDeleteUserCalls(401,numberOfCalls);
             System.out.println("Tiempo total para 1 llamada: " + totalTime + " ms");
         }
 
@@ -422,7 +422,7 @@ public class IntegrationTests {
         @DisplayName("10 llamadas a DELETE /v1/users/{id}")
         void testDeleteUser_10Calls() {
             int numberOfCalls = 10;
-            long totalTime = makeMultipleDeleteUserCalls(201,numberOfCalls);
+            long totalTime = makeMultipleDeleteUserCalls(501,numberOfCalls);
             System.out.println("Tiempo total para 10 llamadas: " + totalTime + " ms");
         }
 
@@ -430,7 +430,7 @@ public class IntegrationTests {
         @DisplayName("100 llamadas a DELETE /v1/users/{id}")
         void testDeleteUser_100Calls() {
             int numberOfCalls = 100;
-            long totalTime = makeMultipleDeleteUserCalls(1,numberOfCalls);
+            long totalTime = makeMultipleDeleteUserCalls(301,numberOfCalls);
             System.out.println("Tiempo total para 100 llamadas: " + totalTime + " ms");
         }
 
@@ -444,6 +444,81 @@ public class IntegrationTests {
                         .uri(BASE_URL + "/" + userId)
                         .exchange()
                         .expectStatus().isNoContent();
+            }
+
+            long endTime = System.currentTimeMillis();
+            return endTime - startTime;
+        }
+    }
+
+    @Nested
+    @DisplayName("GET /apiToken tests")
+    class GetUserByApiTokenTests {
+
+        @BeforeEach
+        void setupUsers() {
+            Flux<Usuarios> users = Flux.range(0, 100)
+                    .map(i -> Usuarios.builder()
+                            .userName("testuser" + i)
+                            .name("Test")
+                            .lastName("User")
+                            .email("testuser" + i + "@example.com")
+                            .password(PasswordUtil.hashPassword("Password123"))
+                            .role("USER")
+                            .photo("photoUrl")
+                            .description("Test description")
+                            .apiToken("validApiToken" +i)
+                            .createdAt(LocalDateTime.now())
+                            .updatedAt(LocalDateTime.now())
+                            .build()
+                    );
+            userRepository.saveAll(users).blockLast();
+        }
+
+
+        @Test
+        @DisplayName("1 llamada a GET /apiToken")
+        void testGetUserByApiToken_1Call() {
+            int numberOfCalls = 1;
+            long totalTime = makeMultipleCalls(numberOfCalls);
+            System.out.println("Tiempo total para 1 llamada: " + totalTime + " ms");
+        }
+
+        @Test
+        @DisplayName("10 llamadas a GET /apiToken")
+        void testGetUserByApiToken_10Calls() {
+            int numberOfCalls = 10;
+            long totalTime = makeMultipleCalls(numberOfCalls);
+            System.out.println("Tiempo total para 10 llamadas: " + totalTime + " ms");
+        }
+
+        @Test
+        @DisplayName("100 llamadas a GET /apiToken")
+        void testGetUserByApiToken_100Calls() {
+            int numberOfCalls = 100;
+            long totalTime = makeMultipleCalls(numberOfCalls);
+            System.out.println("Tiempo total para 100 llamadas: " + totalTime + " ms");
+        }
+
+        private long makeMultipleCalls(int numberOfCalls) {
+            long startTime = System.currentTimeMillis();
+
+            for (int i = 0; i < numberOfCalls; i++) {
+                int finalI = i;
+                int finalI1 = i;
+                webTestClient.get()
+                        .uri(uriBuilder -> uriBuilder
+                                .path(BASE_URL+"/apiToken")
+                                .queryParam("apiToken", "validApiToken"+ finalI)
+                                .build())
+                        .exchange()
+                        .expectStatus().isOk()
+                        .expectBody(UserDetailDTO.class)
+                        .value(userDetailDTO -> {
+                            assertThat(userDetailDTO).isNotNull();
+                            assertThat(userDetailDTO.getUserName()).isEqualTo("testuser"+ finalI1);
+                            assertThat(userDetailDTO.getEmail()).isEqualTo("testuser" + finalI1 + "@example.com");
+                        });
             }
 
             long endTime = System.currentTimeMillis();

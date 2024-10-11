@@ -375,5 +375,73 @@ class userServiceImplTest {
         }
     }
 
+    @Test
+    @DisplayName("Test findByApiToken returns UserDetailDTO when valid token is provided")
+    public void testFindByApiToken_Success() {
+
+        String validApiToken = "validApiToken";
+        Usuarios user = new Usuarios(1L, "user", "John", "Doe", "john.doe@example.com", null, null, "hashedPassword", "USER", null, validApiToken, null, null);
+
+        when(userRepository.findByApiToken(validApiToken)).thenReturn(Mono.just(user));
+
+        // Act
+        Mono<UserDetailDTO> response = userService.findByApiToken(validApiToken);
+
+        // Assert
+        StepVerifier.create(response)
+                .assertNext(result -> {
+                    assertThat(result).isEqualTo(UserMapper.toUserDetailDTO(user));
+                })
+                .verifyComplete();
+
+        verify(userRepository, times(1)).findByApiToken(validApiToken);
+    }
+
+    @Nested
+    @DisplayName("Find User By ID")
+    class FindUserById {
+
+        @Test
+        @DisplayName("Given a valid user ID, Then return user details")
+        void findUserByIdValid() {
+            // Given
+            Usuarios usuarios = UserMapper.toUser(USER_RETURN);
+            when(userRepository.findById(anyLong())).thenReturn(Mono.just(usuarios));
+
+            // When
+            Mono<UserDetailDTO> userDetailDTOMono = userService.findById(USER_ID);
+
+            // Then
+            StepVerifier.create(userDetailDTOMono)
+                    .assertNext(userDetailDTO -> {
+                        assertThat(userDetailDTO)
+                                .isInstanceOf(UserDetailDTO.class)
+                                .usingRecursiveComparison()
+                                .isEqualTo(UserMapper.toUserDetailDTO(usuarios));
+                    })
+                    .verifyComplete();
+
+            verify(userRepository).findById(USER_ID);
+        }
+
+        @Test
+        @DisplayName("Given a non-existing user ID, Then throw UserNotFoundException")
+        void findUserByIdNotFound() {
+            // Given
+            when(userRepository.findById(USER_ID)).thenReturn(Mono.empty());
+
+            // When
+            Mono<UserDetailDTO> userDetailDTOMono = userService.findById(USER_ID);
+
+            // Then
+            StepVerifier.create(userDetailDTOMono)
+                    .expectErrorMatches(error -> error instanceof UserNotFoundException &&
+                            error.getMessage().equals("User with ID " + USER_ID + " not found"))
+                    .verify();
+
+            verify(userRepository).findById(USER_ID);
+        }
+    }
+
 
 }
