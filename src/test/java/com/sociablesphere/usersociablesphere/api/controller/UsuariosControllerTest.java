@@ -76,15 +76,12 @@ class UserControllerTest {
     @Test
     @DisplayName("Test registerUser registers a new user")
     void testRegisterUser() {
-        // Arrange
         when(userService.register(any(UserCreationDTO.class))).thenReturn(Mono.just(userDetailDTO));
         when(userResponseService.buildCreatedResponse(eq(userDetailDTO), eq(userCreationDTO.getEmail())))
                 .thenReturn(Mono.just(ResponseEntity.status(HttpStatus.CREATED).body(userDetailDTO)));
 
-        // Act
         Mono<ResponseEntity<UserDetailDTO>> response = userController.registerUser(userCreationDTO);
 
-        // Assert
         StepVerifier.create(response)
                 .assertNext(result -> {
                     assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -96,18 +93,14 @@ class UserControllerTest {
         verify(userResponseService).buildCreatedResponse(userDetailDTO, userCreationDTO.getEmail());
     }
 
-
     @Test
     @DisplayName("Test loginUser logs in a user")
     void testLoginUser() {
-        // Arrange
         when(userService.login(any(UserLoginDTO.class))).thenReturn(Mono.just(userDetailDTO));
         when(userResponseService.buildOkResponse(userDetailDTO)).thenReturn(Mono.just(ResponseEntity.ok(userDetailDTO)));
 
-        // Act
         Mono<ResponseEntity<UserDetailDTO>> response = userController.loginUser(userLoginDTO);
 
-        // Assert
         StepVerifier.create(response)
                 .assertNext(result -> {
                     assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -122,15 +115,12 @@ class UserControllerTest {
     @Test
     @DisplayName("Test patchPassword updates user's password")
     void testPatchPassword() {
-        // Arrange
         Long userId = userDetailDTO.getId();
         when(userService.updatePassword(eq(userId), any(UserPasswordDTO.class))).thenReturn(Mono.just(userDetailDTO));
         when(userResponseService.buildOkResponse(userDetailDTO)).thenReturn(Mono.just(ResponseEntity.ok(userDetailDTO)));
 
-        // Act
         Mono<ResponseEntity<UserDetailDTO>> response = userController.patchPassword(userId, userPasswordDTO);
 
-        // Assert
         StepVerifier.create(response)
                 .assertNext(result -> {
                     assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -142,19 +132,15 @@ class UserControllerTest {
         verify(userResponseService).buildOkResponse(userDetailDTO);
     }
 
-
     @Test
     @DisplayName("Test updateUser updates user information")
     void testUpdateUser() {
-        // Arrange
         Long userId = userDetailDTO.getId();
         when(userService.updateUser(eq(userId), any(UserCreationDTO.class))).thenReturn(Mono.just(userDetailDTO));
         when(userResponseService.buildOkResponse(userDetailDTO)).thenReturn(Mono.just(ResponseEntity.ok(userDetailDTO)));
 
-        // Act
         Mono<ResponseEntity<UserDetailDTO>> response = userController.updateUser(userId, userCreationDTO);
 
-        // Assert
         StepVerifier.create(response)
                 .assertNext(result -> {
                     assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -166,19 +152,15 @@ class UserControllerTest {
         verify(userResponseService).buildOkResponse(userDetailDTO);
     }
 
-
     @Test
     @DisplayName("Test deleteUser deletes a user account")
     void testDeleteUser() {
-        // Arrange
         Long id = Math.abs(new Random().nextLong());
         when(userService.deleteAccount(id)).thenReturn(Mono.empty());
         when(userResponseService.buildNoContentResponse()).thenReturn(Mono.just(ResponseEntity.noContent().build()));
 
-        // Act
         Mono<ResponseEntity<Void>> response = userController.deleteUser(id);
 
-        // Assert
         StepVerifier.create(response)
                 .assertNext(result -> assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT))
                 .verifyComplete();
@@ -190,15 +172,13 @@ class UserControllerTest {
     @Test
     @DisplayName("Test find user by apiToken")
     public void testFindByApiToken() {
-
         String validApiToken = "validApiToken";
 
         when(userService.findByApiToken(validApiToken)).thenReturn(Mono.just(userDetailDTO));
+        when(userResponseService.buildOkResponse(userDetailDTO)).thenReturn(Mono.just(ResponseEntity.ok(userDetailDTO)));
 
-        // Act
         Mono<ResponseEntity<UserDetailDTO>> response = userController.getUserByApiToken(validApiToken);
 
-        // Assert
         StepVerifier.create(response)
                 .assertNext(result -> {
                     assertThat(result.getStatusCodeValue()).isEqualTo(200);
@@ -207,13 +187,16 @@ class UserControllerTest {
                 .verifyComplete();
 
         verify(userService, times(1)).findByApiToken(validApiToken);
+        verify(userResponseService).buildOkResponse(userDetailDTO);
     }
 
     @Test
     @DisplayName("Test find user by ID")
     public void testGetUserById() {
         Long userId = userDetailDTO.getId();
+
         when(userService.findById(userId)).thenReturn(Mono.just(userDetailDTO));
+        when(userResponseService.buildOkResponse(userDetailDTO)).thenReturn(Mono.just(ResponseEntity.ok(userDetailDTO)));
 
         Mono<ResponseEntity<UserDetailDTO>> response = userController.getUserById(userId);
 
@@ -225,6 +208,6 @@ class UserControllerTest {
                 .verifyComplete();
 
         verify(userService, times(1)).findById(userId);
+        verify(userResponseService).buildOkResponse(userDetailDTO);
     }
-
 }

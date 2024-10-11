@@ -17,5 +17,6 @@ public class UserResponseBuilder {
     public static ResponseEntity<UserDetailDTO> generateOkResponse(UserDetailDTO user) {
         return ResponseEntity.ok(user);
     }
+
 }
 

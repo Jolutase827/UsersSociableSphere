@@ -20,4 +20,12 @@ public class UserResponseService {
     public Mono<ResponseEntity<Void>> buildNoContentResponse() {
         return Mono.just(UserResponseBuilder.generateNoContentResponse());
     }
+
+    public Mono<ResponseEntity<UserDetailDTO>> buildApiTokenResponse(UserDetailDTO user) {
+        return buildOkResponse(user);
+    }
+
+    public Mono<ResponseEntity<UserDetailDTO>> buildUserByIdResponse(UserDetailDTO user) {
+        return buildOkResponse(user);
+    }
 }
