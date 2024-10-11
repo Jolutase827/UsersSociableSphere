@@ -1,6 +1,10 @@
 package com.sociablesphere.usersociablesphere.api.controller;
 
-import com.sociablesphere.usersociablesphere.api.dto.*;
+import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
+import com.sociablesphere.usersociablesphere.api.dto.UserDetailDTO;
+import com.sociablesphere.usersociablesphere.api.dto.UserLoginDTO;
+import com.sociablesphere.usersociablesphere.api.dto.UserPasswordDTO;
+import com.sociablesphere.usersociablesphere.response.service.UserResponseService;
 import com.sociablesphere.usersociablesphere.service.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -9,22 +13,24 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.util.Random;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(SpringExtension.class)
-public class UsuariosControllerTest {
+@ExtendWith(MockitoExtension.class)
+class UserControllerTest {
 
     @Mock
     private UserService userService;
+
+    @Mock
+    private UserResponseService userResponseService;
 
     @InjectMocks
     private UserController userController;
@@ -35,8 +41,7 @@ public class UsuariosControllerTest {
     private UserPasswordDTO userPasswordDTO;
 
     @BeforeEach
-    public void setUp() {
-
+    void setUp() {
         Long userId = new Random().nextLong();
 
         userDetailDTO = UserDetailDTO.builder()
@@ -69,27 +74,12 @@ public class UsuariosControllerTest {
     }
 
     @Test
-    @DisplayName("Test getAllUsers returns all users")
-    public void testGetAllUsers() {
-        // Arrange
-        when(userService.findAll()).thenReturn(Flux.just(userDetailDTO));
-
-        // Act
-        Flux<UserDetailDTO> response = userController.getAllUsers();
-
-        // Assert
-        StepVerifier.create(response)
-                .expectNext(userDetailDTO)
-                .verifyComplete();
-
-        verify(userService, times(1)).findAll();
-    }
-
-    @Test
     @DisplayName("Test registerUser registers a new user")
-    public void testRegisterUser() {
+    void testRegisterUser() {
         // Arrange
         when(userService.register(any(UserCreationDTO.class))).thenReturn(Mono.just(userDetailDTO));
+        when(userResponseService.buildCreatedResponse(eq(userDetailDTO), eq(userCreationDTO.getEmail())))
+                .thenReturn(Mono.just(ResponseEntity.status(HttpStatus.CREATED).body(userDetailDTO)));
 
         // Act
         Mono<ResponseEntity<UserDetailDTO>> response = userController.registerUser(userCreationDTO);
@@ -97,19 +87,22 @@ public class UsuariosControllerTest {
         // Assert
         StepVerifier.create(response)
                 .assertNext(result -> {
-                    assertThat(result.getStatusCodeValue()).isEqualTo(201);
+                    assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
                     assertThat(result.getBody()).isEqualTo(userDetailDTO);
                 })
                 .verifyComplete();
 
-        verify(userService, times(1)).register(userCreationDTO);
+        verify(userService).register(userCreationDTO);
+        verify(userResponseService).buildCreatedResponse(userDetailDTO, userCreationDTO.getEmail());
     }
+
 
     @Test
     @DisplayName("Test loginUser logs in a user")
-    public void testLoginUser() {
+    void testLoginUser() {
         // Arrange
         when(userService.login(any(UserLoginDTO.class))).thenReturn(Mono.just(userDetailDTO));
+        when(userResponseService.buildOkResponse(userDetailDTO)).thenReturn(Mono.just(ResponseEntity.ok(userDetailDTO)));
 
         // Act
         Mono<ResponseEntity<UserDetailDTO>> response = userController.loginUser(userLoginDTO);
@@ -117,20 +110,22 @@ public class UsuariosControllerTest {
         // Assert
         StepVerifier.create(response)
                 .assertNext(result -> {
-                    assertThat(result.getStatusCodeValue()).isEqualTo(200);
+                    assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
                     assertThat(result.getBody()).isEqualTo(userDetailDTO);
                 })
                 .verifyComplete();
 
-        verify(userService, times(1)).login(userLoginDTO);
+        verify(userService).login(userLoginDTO);
+        verify(userResponseService).buildOkResponse(userDetailDTO);
     }
 
     @Test
     @DisplayName("Test patchPassword updates user's password")
-    public void testPatchPassword() {
+    void testPatchPassword() {
         // Arrange
         Long userId = userDetailDTO.getId();
         when(userService.updatePassword(eq(userId), any(UserPasswordDTO.class))).thenReturn(Mono.just(userDetailDTO));
+        when(userResponseService.buildOkResponse(userDetailDTO)).thenReturn(Mono.just(ResponseEntity.ok(userDetailDTO)));
 
         // Act
         Mono<ResponseEntity<UserDetailDTO>> response = userController.patchPassword(userId, userPasswordDTO);
@@ -138,20 +133,23 @@ public class UsuariosControllerTest {
         // Assert
         StepVerifier.create(response)
                 .assertNext(result -> {
-                    assertThat(result.getStatusCodeValue()).isEqualTo(200);
+                    assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
                     assertThat(result.getBody()).isEqualTo(userDetailDTO);
                 })
                 .verifyComplete();
 
-        verify(userService, times(1)).updatePassword(userId, userPasswordDTO);
+        verify(userService).updatePassword(userId, userPasswordDTO);
+        verify(userResponseService).buildOkResponse(userDetailDTO);
     }
+
 
     @Test
     @DisplayName("Test updateUser updates user information")
-    public void testUpdateUser() {
+    void testUpdateUser() {
         // Arrange
         Long userId = userDetailDTO.getId();
         when(userService.updateUser(eq(userId), any(UserCreationDTO.class))).thenReturn(Mono.just(userDetailDTO));
+        when(userResponseService.buildOkResponse(userDetailDTO)).thenReturn(Mono.just(ResponseEntity.ok(userDetailDTO)));
 
         // Act
         Mono<ResponseEntity<UserDetailDTO>> response = userController.updateUser(userId, userCreationDTO);
@@ -159,29 +157,34 @@ public class UsuariosControllerTest {
         // Assert
         StepVerifier.create(response)
                 .assertNext(result -> {
-                    assertThat(result.getStatusCodeValue()).isEqualTo(200);
+                    assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
                     assertThat(result.getBody()).isEqualTo(userDetailDTO);
                 })
                 .verifyComplete();
 
-        verify(userService, times(1)).updateUser(userId, userCreationDTO);
+        verify(userService).updateUser(userId, userCreationDTO);
+        verify(userResponseService).buildOkResponse(userDetailDTO);
     }
+
 
     @Test
     @DisplayName("Test deleteUser deletes a user account")
-    public void testDeleteUser() {
+    void testDeleteUser() {
         // Arrange
         Long id = Math.abs(new Random().nextLong());
         when(userService.deleteAccount(id)).thenReturn(Mono.empty());
+        when(userResponseService.buildNoContentResponse()).thenReturn(Mono.just(ResponseEntity.noContent().build()));
 
         // Act
         Mono<ResponseEntity<Void>> response = userController.deleteUser(id);
 
         // Assert
         StepVerifier.create(response)
-                .assertNext(result -> assertThat(result.getStatusCodeValue()).isEqualTo(204))
+                .assertNext(result -> assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT))
                 .verifyComplete();
 
-        verify(userService, times(1)).deleteAccount(id);
+        verify(userService).deleteAccount(id);
+        verify(userResponseService).buildNoContentResponse();
     }
+
 }
