@@ -1,6 +1,7 @@
 package com.sociablesphere.usersociablesphere.api.controller;
 
 import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
+import com.sociablesphere.usersociablesphere.api.dto.UserResponseDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserDetailDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserLoginDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserPasswordDTO;
@@ -15,9 +16,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -210,4 +214,38 @@ class UserControllerTest {
         verify(userService, times(1)).findById(userId);
         verify(userResponseService).buildOkResponse(userDetailDTO);
     }
+
+    @Test
+    @DisplayName("Test getUsersByIds returns users by their IDs")
+    void testGetUsersByIds() {
+        // Given
+        List<Long> userIds = Arrays.asList(1L, 2L, 3L);
+        UserResponseDTO user1 = new UserResponseDTO(1L, "john_doe", "John", "Doe", "john.doe@example.com", null, null, "USER");
+        UserResponseDTO user2 = new UserResponseDTO(2L, "jane_doe", "Jane", "Doe", "jane.doe@example.com", null, null, "USER");
+
+        // Mock the service to return a Flux of users
+        when(userService.findUsersByIds(userIds)).thenReturn(Flux.just(user1, user2));
+
+        // When
+        Mono<ResponseEntity<Flux<UserResponseDTO>>> response = userController.getUsersByIds(userIds);
+
+        // Then
+        StepVerifier.create(response)
+                .assertNext(responseEntity -> {
+                    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+                    // Verify that the body contains the correct Flux of users
+                    Flux<UserResponseDTO> userFlux = responseEntity.getBody();
+                    StepVerifier.create(userFlux)
+                            .expectNext(user1)
+                            .expectNext(user2)
+                            .verifyComplete();
+                })
+                .verifyComplete();
+
+        // Verify that the service was called with the correct arguments
+        verify(userService).findUsersByIds(userIds);
+    }
+
+
 }

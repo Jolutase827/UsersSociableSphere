@@ -1,9 +1,6 @@
 package com.sociablesphere.usersociablesphere.api.controller;
 
-import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
-import com.sociablesphere.usersociablesphere.api.dto.UserDetailDTO;
-import com.sociablesphere.usersociablesphere.api.dto.UserLoginDTO;
-import com.sociablesphere.usersociablesphere.api.dto.UserPasswordDTO;
+import com.sociablesphere.usersociablesphere.api.dto.*;
 import com.sociablesphere.usersociablesphere.response.service.UserResponseService;
 import com.sociablesphere.usersociablesphere.service.user.UserService;
 import jakarta.validation.Valid;
@@ -11,7 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/users")
@@ -81,6 +81,20 @@ public class UserController {
                 .flatMap(userResponseService::buildOkResponse)
                 .doOnSuccess(user -> logger.info("User found successfully with ID: {}", id));
     }
+
+    @PostMapping("/usersByIds")
+    public Mono<ResponseEntity<Flux<UserResponseDTO>>> getUsersByIds(@RequestBody List<Long> userIds) {
+        logger.info("Fetching users by IDs: {}", userIds);
+
+        return Mono.just(
+                ResponseEntity.ok()
+                        .body(userService.findUsersByIds(userIds))  // Return Flux<UserResponseDTO> as body
+        ).onErrorResume(e -> {
+            logger.error("Error fetching users by IDs", e);
+            return Mono.just(ResponseEntity.status(500).build());  // Handle error
+        });
+    }
+
 
 
 }

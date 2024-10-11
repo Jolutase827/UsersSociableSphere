@@ -8,6 +8,9 @@ import com.sociablesphere.usersociablesphere.mapper.UserMapper;
 import com.sociablesphere.usersociablesphere.model.Usuarios;
 import com.sociablesphere.usersociablesphere.repository.UserRepository;
 import static com.sociablesphere.usersociablesphere.service.Data.DataUserServiceImplTest.*;
+import com.sociablesphere.usersociablesphere.api.dto.UserResponseDTO;
+import reactor.core.publisher.Flux;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
@@ -24,6 +27,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.lang.Long;
+import java.util.List;
 import java.util.Random;
 
 
@@ -443,5 +447,28 @@ class userServiceImplTest {
         }
     }
 
+
+
+    @Test
+    @DisplayName("Test findUsersByIds retrieves users correctly")
+    void testFindUsersByIds() {
+        // Given
+        List<Long> userIds = Arrays.asList(1L, 2L, 3L);
+        Usuarios user1 = new Usuarios(1L, "john_doe", "John", "Doe", "john.doe@example.com", null, null, "hashedPassword", "USER", null, null, null, null);
+        Usuarios user2 = new Usuarios(2L, "jane_doe", "Jane", "Doe", "jane.doe@example.com", null, null, "hashedPassword", "USER", null, null, null, null);
+
+        when(userRepository.findByIds(userIds)).thenReturn(Flux.just(user1, user2));
+
+        // When
+        Flux<UserResponseDTO> result = userService.findUsersByIds(userIds);
+
+        // Then
+        StepVerifier.create(result)
+                .expectNextMatches(dto -> dto.getId().equals(1L) && dto.getUserName().equals("john_doe"))
+                .expectNextMatches(dto -> dto.getId().equals(2L) && dto.getUserName().equals("jane_doe"))
+                .verifyComplete();
+
+        verify(userRepository).findByIds(userIds);
+    }
 
 }

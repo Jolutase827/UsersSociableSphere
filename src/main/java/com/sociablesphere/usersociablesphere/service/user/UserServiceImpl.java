@@ -1,9 +1,6 @@
 package com.sociablesphere.usersociablesphere.service.user;
 
-import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
-import com.sociablesphere.usersociablesphere.api.dto.UserDetailDTO;
-import com.sociablesphere.usersociablesphere.api.dto.UserLoginDTO;
-import com.sociablesphere.usersociablesphere.api.dto.UserPasswordDTO;
+import com.sociablesphere.usersociablesphere.api.dto.*;
 import com.sociablesphere.usersociablesphere.exceptions.InvalidCredentialsException;
 import com.sociablesphere.usersociablesphere.exceptions.UserAlreadyExistsException;
 import com.sociablesphere.usersociablesphere.exceptions.UserNotFoundException;
@@ -17,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -135,5 +134,12 @@ public class UserServiceImpl implements UserService {
                 .map(UserMapper::toUserDetailDTO)
                 .doOnError(e -> logger.error("Error finding user with ID: {}", id, e));
     }
+
+    @Override
+    public Flux<UserResponseDTO> findUsersByIds(List<Long> userIds) {
+        return userRepository.findByIds(userIds)
+                .map(UserMapper::toUserResponseDTO); // Map the entity to the DTO using the mapper
+    }
+
 
 }
