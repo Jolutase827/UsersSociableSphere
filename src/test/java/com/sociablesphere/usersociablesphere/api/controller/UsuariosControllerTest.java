@@ -1,10 +1,6 @@
 package com.sociablesphere.usersociablesphere.api.controller;
 
-import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
-import com.sociablesphere.usersociablesphere.api.dto.UserResponseDTO;
-import com.sociablesphere.usersociablesphere.api.dto.UserDetailDTO;
-import com.sociablesphere.usersociablesphere.api.dto.UserLoginDTO;
-import com.sociablesphere.usersociablesphere.api.dto.UserPasswordDTO;
+import com.sociablesphere.usersociablesphere.api.dto.*;
 import com.sociablesphere.usersociablesphere.response.service.UserResponseService;
 import com.sociablesphere.usersociablesphere.service.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -226,25 +222,23 @@ class UserControllerTest {
         // Mock the service to return a Flux of users
         when(userService.findUsersByIds(userIds)).thenReturn(Flux.just(user1, user2));
 
+        // Mock the response service to wrap each user in a ResponseEntity
+        when(userResponseService.buildUsersResponse(user1)).thenReturn(Flux.just(ResponseEntity.ok(user1)));
+        when(userResponseService.buildUsersResponse(user2)).thenReturn(Flux.just(ResponseEntity.ok(user2)));
+
         // When
-        Mono<ResponseEntity<Flux<UserResponseDTO>>> response = userController.getUsersByIds(userIds);
+        Flux<ResponseEntity<UserResponseDTO>> response = userController.getUsersByIds(userIds);
 
         // Then
         StepVerifier.create(response)
-                .assertNext(responseEntity -> {
-                    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-                    // Verify that the body contains the correct Flux of users
-                    Flux<UserResponseDTO> userFlux = responseEntity.getBody();
-                    StepVerifier.create(userFlux)
-                            .expectNext(user1)
-                            .expectNext(user2)
-                            .verifyComplete();
-                })
+                .expectNextMatches(responseEntity -> responseEntity.getStatusCode().equals(HttpStatus.OK) && responseEntity.getBody().equals(user1))
+                .expectNextMatches(responseEntity -> responseEntity.getStatusCode().equals(HttpStatus.OK) && responseEntity.getBody().equals(user2))
                 .verifyComplete();
 
         // Verify that the service was called with the correct arguments
         verify(userService).findUsersByIds(userIds);
+        verify(userResponseService).buildUsersResponse(user1);
+        verify(userResponseService).buildUsersResponse(user2);
     }
 
 

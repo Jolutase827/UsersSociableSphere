@@ -1,6 +1,7 @@
 package com.sociablesphere.usersociablesphere.response.builder;
 
 import com.sociablesphere.usersociablesphere.api.dto.UserDetailDTO;
+import com.sociablesphere.usersociablesphere.api.dto.UserResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -10,13 +11,15 @@ public class UserResponseBuilder {
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
-    public static ResponseEntity<Void> generateNoContentResponse() {
-        return ResponseEntity.noContent().build();
-    }
-
     public static ResponseEntity<UserDetailDTO> generateOkResponse(UserDetailDTO user) {
         return ResponseEntity.ok(user);
     }
 
-}
+    public static ResponseEntity<Void> generateNoContentResponse() {
+        return ResponseEntity.noContent().build();
+    }
 
+    public static ResponseEntity<UserResponseDTO> generateUserOkResponse(UserResponseDTO user) {
+        return ResponseEntity.ok(user);
+    }
+}

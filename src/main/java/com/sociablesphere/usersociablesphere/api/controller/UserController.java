@@ -28,7 +28,7 @@ public class UserController {
 
     @PostMapping("/create")
     public Mono<ResponseEntity<UserDetailDTO>> registerUser(@Valid @RequestBody UserCreationDTO userCreationDTO) {
-        logger.info("Registering user with EMAIL: {}", userCreationDTO.getEmail());
+        logger.info("Registering USER with EMAIL: {}", userCreationDTO.getEmail());
         return userService.register(userCreationDTO)
                 .flatMap(user -> userResponseService.buildCreatedResponse(user, userCreationDTO.getEmail()))
                 .doOnSuccess(user -> logger.info("User registered successfully with email: {}", userCreationDTO.getEmail()));
@@ -36,7 +36,7 @@ public class UserController {
 
     @PostMapping("/login")
     public Mono<ResponseEntity<UserDetailDTO>> loginUser(@Valid @RequestBody UserLoginDTO userLoginDTO) {
-        logger.info("Login user with EMAIL: {}", userLoginDTO.getEmail());
+        logger.info("Login USER with EMAIL: {}", userLoginDTO.getEmail());
         return userService.login(userLoginDTO)
                 .flatMap(userResponseService::buildOkResponse)
                 .doOnSuccess(user -> logger.info("User logged in successfully with email: {}", userLoginDTO.getEmail()));
@@ -44,7 +44,7 @@ public class UserController {
 
     @PutMapping("/{id}/password")
     public Mono<ResponseEntity<UserDetailDTO>> patchPassword(@PathVariable Long id, @Valid @RequestBody UserPasswordDTO userPassword) {
-        logger.info("Patching password with ID: {}", id);
+        logger.info("Patching PASSWORD with ID: {}", id);
         return userService.updatePassword(id, userPassword)
                 .flatMap(userResponseService::buildOkResponse)
                 .doOnSuccess(user -> logger.info("Password updated successfully for user ID: {}", id));
@@ -52,7 +52,7 @@ public class UserController {
 
     @PutMapping("/{id}")
     public Mono<ResponseEntity<UserDetailDTO>> updateUser(@PathVariable Long id, @Valid @RequestBody UserCreationDTO dataToUpdate) {
-        logger.info("Updating user with ID: {}", id);
+        logger.info("Updating USER with ID: {}", id);
         return userService.updateUser(id, dataToUpdate)
                 .flatMap(userResponseService::buildOkResponse)
                 .doOnSuccess(user -> logger.info("User updated successfully for ID: {}", id));
@@ -60,7 +60,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public Mono<ResponseEntity<Void>> deleteUser(@PathVariable Long id) {
-        logger.info("Deleting user with ID: {}", id);
+        logger.info("Deleting USER with ID: {}", id);
         return userService.deleteAccount(id)
                 .then(userResponseService.buildNoContentResponse())
                 .doOnSuccess(v -> logger.info("User with ID: {} deleted successfully", id));
@@ -68,7 +68,7 @@ public class UserController {
 
     @GetMapping("/apiToken")
     public Mono<ResponseEntity<UserDetailDTO>> getUserByApiToken(@RequestParam String apiToken) {
-        logger.info("Fetching a user by ApiToken");
+        logger.info("Fetching a USER by ApiToken");
         return userService.findByApiToken(apiToken)
                 .flatMap(userResponseService::buildOkResponse)
                 .doOnSuccess(user -> logger.info("User found successfully with apiToken: {}", apiToken));
@@ -76,25 +76,18 @@ public class UserController {
 
     @GetMapping("/{id}")
     public Mono<ResponseEntity<UserDetailDTO>> getUserById(@PathVariable Long id) {
-        logger.info("Fetching user with ID: {}", id);
+        logger.info("Fetching USER with ID: {}", id);
         return userService.findById(id)
                 .flatMap(userResponseService::buildOkResponse)
                 .doOnSuccess(user -> logger.info("User found successfully with ID: {}", id));
     }
 
     @PostMapping("/usersByIds")
-    public Mono<ResponseEntity<Flux<UserResponseDTO>>> getUsersByIds(@RequestBody List<Long> userIds) {
-        logger.info("Fetching users by IDs: {}", userIds);
-
-        return Mono.just(
-                ResponseEntity.ok()
-                        .body(userService.findUsersByIds(userIds))  // Return Flux<UserResponseDTO> as body
-        ).onErrorResume(e -> {
-            logger.error("Error fetching users by IDs", e);
-            return Mono.just(ResponseEntity.status(500).build());  // Handle error
-        });
+    public Flux<ResponseEntity<UserResponseDTO>> getUsersByIds(@RequestBody List<Long> userIds) {
+        logger.info("Fetching USERS by IDs: {}", userIds);
+        return userService.findUsersByIds(userIds)
+                .flatMap(userResponseService::buildUsersResponse)
+                .doOnTerminate(() -> logger.info("USERS found successfully with IDs: {}", userIds));
     }
-
-
 
 }
