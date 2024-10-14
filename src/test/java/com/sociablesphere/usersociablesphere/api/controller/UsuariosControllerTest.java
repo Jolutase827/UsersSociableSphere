@@ -78,14 +78,14 @@ class UserControllerTest {
     @Test
     void loginUser_shouldReturnOkResponse() {
         when(userServiceLogic.loginUserAndBuildResponse(any(UserLoginDTO.class)))
-                .thenReturn(Mono.just(ResponseEntity.ok(userDetailDTO))); // Usa el UserDetailDTO configurado
+                .thenReturn(Mono.just(ResponseEntity.ok(userDetailDTO)));
 
         Mono<ResponseEntity<UserDetailDTO>> result = userController.loginUser(userLoginDTO);
 
         StepVerifier.create(result)
                 .expectNextMatches(response ->
                         response.getBody() != null &&
-                                response.getBody().getEmail().equals("login@example.com")) // Asegúrate de que el email coincida
+                                response.getBody().getEmail().equals("test@example.com"))
                 .verifyComplete();
     }
 
