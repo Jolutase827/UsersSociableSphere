@@ -1,4 +1,4 @@
-package com.sociablesphere.usersociablesphere.mapper;
+package com.sociablesphere.usersociablesphere.mapper.modelmapper;
 
 import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
 import com.sociablesphere.usersociablesphere.model.Usuarios;

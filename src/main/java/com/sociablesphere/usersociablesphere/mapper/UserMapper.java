@@ -3,6 +3,7 @@ package com.sociablesphere.usersociablesphere.mapper;
 import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserDetailDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserResponseDTO;
+import com.sociablesphere.usersociablesphere.mapper.modelmapper.UserCreationDTOToUsuariosMap;
 import com.sociablesphere.usersociablesphere.model.Usuarios;
 import org.modelmapper.ModelMapper;
 
