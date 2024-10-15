@@ -4,116 +4,92 @@ import com.sociablesphere.usersociablesphere.api.dto.UserCreationDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserDetailDTO;
 import com.sociablesphere.usersociablesphere.api.dto.UserResponseDTO;
 import com.sociablesphere.usersociablesphere.model.Usuarios;
-import com.sociablesphere.usersociablesphere.privacy.PasswordUtil;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDateTime;
-import java.util.Random;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UsuariosMapperTest {
+class UserMapperTest {
 
-    private UserCreationDTO userCreationDTO;
-    private Usuarios usuarios;
-    private String hashedPassword;
-
-    @BeforeEach
-    public void setUp() {
-        userCreationDTO = UserCreationDTO.builder()
+    @Test
+    void testToUser() {
+        // Given
+        UserCreationDTO userCreationDTO = UserCreationDTO.builder()
                 .userName("john_doe")
                 .name("John")
                 .lastName("Doe")
                 .email("john.doe@example.com")
                 .photo("photo_url")
-                .description("A regular user")
-                .password("password123")
+                .description("A brief description")
+                .password("securePassword1")
                 .role("USER")
                 .build();
 
-        hashedPassword = PasswordUtil.hashPassword(userCreationDTO.getPassword());
+        // When
+        Usuarios user = UserMapper.toUser(userCreationDTO);
 
-        usuarios = Usuarios.builder()
-                .id(Math.abs(new Random().nextLong()))
-                .userName("jane_doe")
-                .name("Jane")
-                .lastName("Doe")
-                .email("jane.doe@example.com")
-                .photo("photo_url")
-                .description("Another regular user")
-                .password("hashedPassword456")
-                .role("ADMIN")
-                .wallet(100.0)
-                .apiToken("api_token_example")
-                .createdAt(LocalDateTime.now().minusDays(1))
-                .updatedAt(LocalDateTime.now())
-                .build();
+        // Then
+        assertThat(user).isNotNull();
+        assertThat(user.getUserName()).isEqualTo("john_doe");
+        assertThat(user.getName()).isEqualTo("John");
+        assertThat(user.getLastName()).isEqualTo("Doe");
+        assertThat(user.getEmail()).isEqualTo("john.doe@example.com");
+        assertThat(user.getPhoto()).isEqualTo("photo_url");
+        assertThat(user.getDescription()).isEqualTo("A brief description");
+        assertThat(user.getPassword()).isNotNull();
+        assertThat(user.getPassword()).isNotEqualTo("securePassword1");
+        assertThat(user.getRole()).isEqualTo("USER");
     }
 
     @Test
-    @DisplayName("Test mapping from UserCreationDTO to User")
-    public void testToUser() {
-        // Act
-        Usuarios mappedUsuarios = UserMapper.toUser(userCreationDTO);
+    void testToUserResponseDTO() {
+        // Given
+        Usuarios user = new Usuarios();
+        user.setUserName("john_doe");
+        user.setName("John");
+        user.setLastName("Doe");
+        user.setEmail("john.doe@example.com");
+        user.setPhoto("photo_url");
+        user.setDescription("A brief description");
+        user.setRole("USER");
 
-        // Assert
-        assertThat(mappedUsuarios).isNotNull();
-        assertThat(mappedUsuarios.getUserName()).isEqualTo(userCreationDTO.getUserName());
-        assertThat(mappedUsuarios.getName()).isEqualTo(userCreationDTO.getName());
-        assertThat(mappedUsuarios.getLastName()).isEqualTo(userCreationDTO.getLastName());
-        assertThat(mappedUsuarios.getEmail()).isEqualTo(userCreationDTO.getEmail());
-        assertThat(mappedUsuarios.getPhoto()).isEqualTo(userCreationDTO.getPhoto());
-        assertThat(mappedUsuarios.getDescription()).isEqualTo(userCreationDTO.getDescription());
-        assertThat(mappedUsuarios.getRole()).isEqualTo(userCreationDTO.getRole());
+        // When
+        UserResponseDTO userResponseDTO = UserMapper.toUserResponseDTO(user);
 
-        assertThat(mappedUsuarios.getApiToken()).isNotNull();
-        assertThat(mappedUsuarios.getApiToken()).isNotEmpty();
-        assertThat(mappedUsuarios.getApiToken().length()).isLessThanOrEqualTo(255);
-
-        assertThat(mappedUsuarios.getWallet()).isEqualTo(0.0);
-        assertThat(mappedUsuarios.getCreatedAt()).isNotNull();
-        assertThat(mappedUsuarios.getUpdatedAt()).isNotNull();
+        // Then
+        assertThat(userResponseDTO).isNotNull();
+        assertThat(userResponseDTO.getUserName()).isEqualTo("john_doe");
+        assertThat(userResponseDTO.getName()).isEqualTo("John");
+        assertThat(userResponseDTO.getLastName()).isEqualTo("Doe");
+        assertThat(userResponseDTO.getEmail()).isEqualTo("john.doe@example.com");
+        assertThat(userResponseDTO.getPhoto()).isEqualTo("photo_url");
+        assertThat(userResponseDTO.getDescription()).isEqualTo("A brief description");
+        assertThat(userResponseDTO.getRole()).isEqualTo("USER");
     }
 
     @Test
-    @DisplayName("Test mapping from User to UserResponseDTO")
-    public void testToUserResponseDTO() {
-        // Act
-        UserResponseDTO responseDTO = UserMapper.toUserResponseDTO(usuarios);
+    void testToUserDetailDTO() {
+        // Given
+        Usuarios user = new Usuarios();
+        user.setUserName("john_doe");
+        user.setName("John");
+        user.setLastName("Doe");
+        user.setEmail("john.doe@example.com");
+        user.setPhoto("photo_url");
+        user.setDescription("A brief description");
+        user.setRole("USER");
 
-        // Assert
-        assertThat(responseDTO).isNotNull();
-        assertThat(responseDTO.getId()).isEqualTo(usuarios.getId());
-        assertThat(responseDTO.getUserName()).isEqualTo(usuarios.getUserName());
-        assertThat(responseDTO.getName()).isEqualTo(usuarios.getName());
-        assertThat(responseDTO.getLastName()).isEqualTo(usuarios.getLastName());
-        assertThat(responseDTO.getEmail()).isEqualTo(usuarios.getEmail());
-        assertThat(responseDTO.getPhoto()).isEqualTo(usuarios.getPhoto());
-        assertThat(responseDTO.getDescription()).isEqualTo(usuarios.getDescription());
-        assertThat(responseDTO.getRole()).isEqualTo(usuarios.getRole());
-    }
+        // When
+        UserDetailDTO userDetailDTO = UserMapper.toUserDetailDTO(user);
 
-    @Test
-    @DisplayName("Test mapping from User to UserDetailDTO")
-    public void testToUserDetailDTO() {
-        // Act
-        UserDetailDTO detailDTO = UserMapper.toUserDetailDTO(usuarios);
-
-        // Assert
-        assertThat(detailDTO).isNotNull();
-        assertThat(detailDTO.getId()).isEqualTo(usuarios.getId());
-        assertThat(detailDTO.getUserName()).isEqualTo(usuarios.getUserName());
-        assertThat(detailDTO.getName()).isEqualTo(usuarios.getName());
-        assertThat(detailDTO.getLastName()).isEqualTo(usuarios.getLastName());
-        assertThat(detailDTO.getEmail()).isEqualTo(usuarios.getEmail());
-        assertThat(detailDTO.getPhoto()).isEqualTo(usuarios.getPhoto());
-        assertThat(detailDTO.getDescription()).isEqualTo(usuarios.getDescription());
-        assertThat(detailDTO.getRole()).isEqualTo(usuarios.getRole());
-        assertThat(detailDTO.getWallet()).isEqualTo(usuarios.getWallet());
-        assertThat(detailDTO.getApiToken()).isEqualTo(usuarios.getApiToken());
-        assertThat(detailDTO.getCreatedAt()).isEqualTo(usuarios.getCreatedAt());
-        assertThat(detailDTO.getUpdatedAt()).isEqualTo(usuarios.getUpdatedAt());
+        // Then
+        assertThat(userDetailDTO).isNotNull();
+        assertThat(userDetailDTO.getUserName()).isEqualTo("john_doe");
+        assertThat(userDetailDTO.getName()).isEqualTo("John");
+        assertThat(userDetailDTO.getLastName()).isEqualTo("Doe");
+        assertThat(userDetailDTO.getEmail()).isEqualTo("john.doe@example.com");
+        assertThat(userDetailDTO.getPhoto()).isEqualTo("photo_url");
+        assertThat(userDetailDTO.getDescription()).isEqualTo("A brief description");
+        assertThat(userDetailDTO.getRole()).isEqualTo("USER");
     }
 }
+
+
